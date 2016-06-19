@@ -1,0 +1,6 @@
+# Config-File, sourced by install-script
+FILES_TO_LINK=" \
+    check_video_length.sh \
+    fix_fiducia_csv.py \
+    maildir_trash.sh"
+

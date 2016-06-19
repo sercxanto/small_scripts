@@ -1,0 +1,28 @@
+"Volksbank XYZ"
+
+"Umsatzanzeige"
+
+"BLZ:";"12345678";;"Datum:";"12.06.2016"
+"Konto:";"87654321";;"Uhrzeit:";"18:16:05"
+"Abfrage von:";"Abfragender";;"Kontoinhaber:";"Kontoinhaber"
+
+"Zeitraum:";;"von:";"01.06.2016";"bis:";"12.06.2016"
+"Betrag in EUR:";;"von:";" ";"bis:";" "
+"Sortiert nach:";"Buchungstag";"absteigend"
+
+"Buchungstag";"Valuta";"Auftraggeber/Zahlungsempfänger";"Empfänger/Zahlungspflichtiger";"Konto-Nr.";"IBAN";"BLZ";"BIC";"Vorgang/Verwendungszweck";"Kundenreferenz";"Währung";"Umsatz";" "
+"10.06.2016";"10.06.2016";"Auftraggeber";"Empfänger";;"DE2138139023131231";;"BDDDD202";"SEPA-Überweisung
+info
+TAN:123434
+TAN:572754 IBAN: DE2131231
+2312321332432 BIC: BDDD202
+001";;"EUR";"1.000,00";"S"
+"01.06.2016";"01.06.2016";"Name";"Empfaenger.";;"DE131283798798213";;"GIDODPA2";"Basislastschrift
+my e.V. Mitgliedsbeitrag
+ID 022 MREF: REFNRBEITRAGXX
+G0034 CRED: IDUUJDLAJLKJDdd
+634 IBAN: DE444444444444444
+09500 BIC: GENJDKDD";;"EUR";"20,00";"S"
+
+"01.06.2016";;;;;;;;;"Anfangssaldo";"EUR";"7.775,61";"H"
+"10.06.2016";;;;;;;;;"Endsaldo";"EUR";"3.397,50";"H"
