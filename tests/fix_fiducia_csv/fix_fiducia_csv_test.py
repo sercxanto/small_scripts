@@ -35,8 +35,7 @@ import unittest
 TESTSCRIPT_DIR = os.path.dirname(__file__)
 SCRIPT_DIR = os.path.realpath(os.path.join(TESTSCRIPT_DIR, os.pardir, os.pardir))
 sys.path.append(SCRIPT_DIR)
-
-import fix_fiducia_csv
+import fix_fiducia_csv # pylint: disable=import-error,wrong-import-position
 
 
 class TestFixFiduciaCsv(unittest.TestCase):
