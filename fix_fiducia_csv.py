@@ -28,6 +28,7 @@
 
 # Standard library imports:
 import argparse
+import datetime
 import csv
 import sys
 
@@ -41,7 +42,7 @@ def get_args():
 
 
 class ParserErrorException(Exception):
-    '''Exception when we detect a file not belonging to duplicity'''
+    '''Exception error, parsing mismatch'''
     pass
 
 
@@ -85,12 +86,23 @@ def fix_file(filepath, outfile):
             if row_nr == skip_lines + 1:
                 if row != expected_header:
                     raise ParserErrorException(filepath)
-                # Don't know the meaning of the empty last field of the header
-                row[-1] = "unknown"
-
-            # Stop on first empty line: We are at the end of data
-            if len(row) == 0:
-                break
+                # Empty last field has the meaning of (S)oll/(H)aben
+                # We will put the info into Umsatz and overwrite it with
+                # the ISO8601 version of the Buchungstag
+                row[-1] = "Buchungstag ISO8601"
+            else:
+                # Stop on first empty line: We are at the end of data
+                if len(row) == 0:
+                    break
+                # Put (S)oll/(H)aben info as sign into Umsatz
+                if row[-1] == "S":
+                    row[-2] = "-" + row[-2]
+                elif row[-1] == "H":
+                    pass
+                else:
+                    raise ParserErrorException(filepath)
+                buchungstag = datetime.datetime.strptime(row[0], "%d.%m.%Y")
+                row[-1] = buchungstag.strftime("%Y-%m-%d")
 
             row[8] = fix_multilinenote(row[8])
 
