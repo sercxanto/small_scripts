@@ -6,7 +6,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Georg Lutz
+# Copyright (c) 2016-2017 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -43,7 +43,8 @@ def get_args():
 
 class ParserErrorException(Exception):
     '''Exception error, parsing mismatch'''
-    pass
+    def __init__(self,*args,**kwargs):
+        Exception.__init__(self,*args,**kwargs)
 
 
 def fix_multilinenote(in_note):
@@ -62,6 +63,68 @@ def fix_multilinenote(in_note):
             out_note = out_note + char
 
     return out_note
+
+
+def read_mapping(filepath):
+    '''Reads a mapping file and returns a structure
+
+    The file is supposed to be in CSV format:
+    * the delimiter is the semicolon, without any quoting
+    * the first line must contain the row names "text;searchterm1;searchterm2"
+    * text is the resulting text
+    * searchterm1 is used for simple text search in all rows of the input data
+    * searchtem2 may be empty. If non empty this is the second string which the input data is searched for
+        * for a sucessfull match searchterm1 AND searchterm2 must be matched
+
+    Example:
+        text;searchterm1;seachterm2
+        resulting text;search one;search two
+
+    The mapping is returned as dict:
+
+    {
+        'searchterm1': ['string1', 'string12'],
+        'searchterm2': ['string2', ''],
+        'text': ['text', 'text2']
+    }
+
+    In case of any error an exception is thrown.
+    '''
+    result = {
+        "text": [],
+        "searchterm1": [],
+        "searchterm2": []
+        }
+    expected_header = ["text", "searchterm1", "searchterm2"]
+    with open(filepath, "rb") as filehandle:
+        filereader = csv.reader(filehandle, delimiter=";")
+        row_nr = 0
+        for row in filereader:
+            row_nr = row_nr + 1
+            if row_nr == 1:
+                if row != expected_header:
+                    raise ParserErrorException(filepath)
+            else:
+                if len(row) < 2 or len(row) > 3:
+                    raise ParserErrorException(filepath)
+                if len(row[0]) == 0:
+                    raise ParserErrorException(filepath)
+                if len(row[1]) == 0:
+                    raise ParserErrorException(filepath)
+                result["text"].append(row[0])
+                result["searchterm1"].append(row[1])
+                if len(row) > 2:
+                    result["searchterm2"].append(row[2])
+                else:
+                    result["searchterm2"].append("")
+        if row_nr == 0:
+            raise ParserErrorException(filepath)
+    return result
+
+
+def get_mapped_text(row, mapping):
+    '''Returns the mapped text for a given row and a mapping'''
+    pass
 
 
 def fix_file(filepath, outfile):

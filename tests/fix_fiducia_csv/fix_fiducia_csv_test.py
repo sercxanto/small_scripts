@@ -4,7 +4,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Georg Lutz
+# Copyright (c) 2016-2017 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -58,6 +58,53 @@ class TestFixFiduciaCsv(unittest.TestCase):
         expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
         self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
         shutil.rmtree(temp_folder)
+
+    def test_mapping_empty(self):
+        in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_empty.csv")
+        try:
+            fix_fiducia_csv.read_mapping(in_mapping)
+        except fix_fiducia_csv.ParserErrorException:
+            pass
+        else:
+            self.fail("Exception not raised")
+
+    def test_mapping_invalidheader(self):
+        in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_invalidheader.csv")
+        try:
+            fix_fiducia_csv.read_mapping(in_mapping)
+        except fix_fiducia_csv.ParserErrorException:
+            pass
+        else:
+            self.fail("Exception not raised")
+
+    def test_mapping_invalidformat(self):
+        in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_invalidformat.csv")
+        try:
+            fix_fiducia_csv.read_mapping(in_mapping)
+        except fix_fiducia_csv.ParserErrorException:
+            pass
+        else:
+            self.fail("Exception not raised")
+
+    def test_mapping_nomapping(self):
+        in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_nomapping.csv")
+        expected = {
+            "text": [],
+            "searchterm1": [],
+            "searchterm2": []
+        }
+        calculated = fix_fiducia_csv.read_mapping(in_mapping)
+        self.assertEqual(calculated, expected)
+
+    def test_mapping1(self):
+        in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping1.csv")
+        expected = {
+            "text":  ["text1", "text2", "text3"],
+            "searchterm1": ["searchterm11", "searchterm21", "searchterm31"],
+            "searchterm2": ["searchterm22", "", ""]
+        }
+        calculated = fix_fiducia_csv.read_mapping(in_mapping)
+        self.assertEqual(calculated, expected)
 
 if __name__ == "__main__":
     unittest.main()
