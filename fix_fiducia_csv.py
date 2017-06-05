@@ -125,7 +125,7 @@ def read_mapping(filepath):
 
 def get_mapped_text(row, mapping):
     '''Returns the mapped text for a given row and a mapping.
-    
+
     row: a single line, an array of strings
     mapping: see read_mapping
     '''
@@ -136,11 +136,11 @@ def get_mapped_text(row, mapping):
         nr_matches_needed = 1
         if len(mapping["searchterm2"][i_mapping]) > 0:
             nr_matches_needed = 2
-        for i_row in range(len(row)):
-            if row[i_row].find(mapping["searchterm1"][i_mapping]) >= 0:
+        for field in row:
+            if field.find(mapping["searchterm1"][i_mapping]) >= 0:
                 nr_matches = nr_matches + 1
             if len(mapping["searchterm2"][i_mapping]) > 0:
-                if row[i_row].find(mapping["searchterm2"][i_mapping]) >= 0:
+                if field.find(mapping["searchterm2"][i_mapping]) >= 0:
                     nr_matches = nr_matches + 1
             if nr_matches >= nr_matches_needed:
                 break
