@@ -59,7 +59,8 @@ class TestFixFiduciaCsv(unittest.TestCase):
         self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
         shutil.rmtree(temp_folder)
 
-    def test_mapping_empty(self):
+    def test_read_mapping_empty(self):
+        '''read mapping_empty.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_empty.csv")
         try:
             fix_fiducia_csv.read_mapping(in_mapping)
@@ -68,7 +69,8 @@ class TestFixFiduciaCsv(unittest.TestCase):
         else:
             self.fail("Exception not raised")
 
-    def test_mapping_invalidheader(self):
+    def test_read_mapping_invalidheader(self):
+        '''read mapping_invalidheader.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_invalidheader.csv")
         try:
             fix_fiducia_csv.read_mapping(in_mapping)
@@ -77,7 +79,8 @@ class TestFixFiduciaCsv(unittest.TestCase):
         else:
             self.fail("Exception not raised")
 
-    def test_mapping_invalidformat(self):
+    def test_read_mapping_invalidformat(self):
+        '''read mapping_invalidformat.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_invalidformat.csv")
         try:
             fix_fiducia_csv.read_mapping(in_mapping)
@@ -86,7 +89,8 @@ class TestFixFiduciaCsv(unittest.TestCase):
         else:
             self.fail("Exception not raised")
 
-    def test_mapping_nomapping(self):
+    def test_read_mapping_nomapping(self):
+        '''read mapping_nomapping.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_nomapping.csv")
         expected = {
             "text": [],
@@ -96,7 +100,8 @@ class TestFixFiduciaCsv(unittest.TestCase):
         calculated = fix_fiducia_csv.read_mapping(in_mapping)
         self.assertEqual(calculated, expected)
 
-    def test_mapping1(self):
+    def test_read_mapping1(self):
+        '''read mapping1.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping1.csv")
         expected = {
             "text":  ["text1", "text2", "text3"],

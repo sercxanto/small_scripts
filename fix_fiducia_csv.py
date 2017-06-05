@@ -43,8 +43,8 @@ def get_args():
 
 class ParserErrorException(Exception):
     '''Exception error, parsing mismatch'''
-    def __init__(self,*args,**kwargs):
-        Exception.__init__(self,*args,**kwargs)
+    def __init__(self, *args, **kwargs):
+        Exception.__init__(self, *args, **kwargs)
 
 
 def fix_multilinenote(in_note):
@@ -73,7 +73,8 @@ def read_mapping(filepath):
     * the first line must contain the row names "text;searchterm1;searchterm2"
     * text is the resulting text
     * searchterm1 is used for simple text search in all rows of the input data
-    * searchtem2 may be empty. If non empty this is the second string which the input data is searched for
+    * searchtem2 may be empty. If non empty this is the second string which the
+      input data is searched for
         * for a sucessfull match searchterm1 AND searchterm2 must be matched
 
     Example:
