@@ -38,6 +38,12 @@ def get_args():
     parser = argparse.ArgumentParser(
         description="Fix the CSV export of fiducia driven banking websites")
     parser.add_argument("csvfile", help="CSV file to fix")
+    parser.add_argument(
+        "mappingfile",
+        help="CSV file for simple search pattern matching.\
+              If given, a column \'text\' with the mapped string will be\
+              added to the output")
+
     return parser.parse_args()
 
 
@@ -97,6 +103,9 @@ def read_mapping(filepath):
         "searchterm2": []
         }
     expected_header = ["text", "searchterm1", "searchterm2"]
+
+    if filepath is None or len(filepath) == 0:
+        return result
     with open(filepath, "rb") as filehandle:
         filereader = csv.reader(filehandle, delimiter=";")
         row_nr = 0
@@ -150,12 +159,18 @@ def get_mapped_text(row, mapping):
     return matched_text
 
 
-def fix_file(filepath, outfile):
-    '''Fix the whole CSV file, writes to outfile'''
+def fix_file(filepath, mapping_file_path, outfile):
+    '''Fix the whole CSV file, writes to outfile.
+
+    When a mapping file is given adds a field text'''
     skip_lines = 12
     expected_header = ["Buchungstag", "Valuta", "Auftraggeber/Zahlungsempfänger", \
             "Empfänger/Zahlungspflichtiger", "Konto-Nr.", "IBAN", "BLZ", "BIC", \
             "Vorgang/Verwendungszweck", "Kundenreferenz", "Währung", "Umsatz", " "]
+    mapping = None
+    if mapping_file_path != None:
+        mapping = read_mapping(mapping_file_path)
+
     with open(filepath, "rb") as filehandle:
         filereader = csv.reader(filehandle, delimiter=";")
         filewriter = csv.writer(outfile, delimiter=';', quoting=csv.QUOTE_ALL)
@@ -176,6 +191,8 @@ def fix_file(filepath, outfile):
                 # We will put the info into Umsatz and overwrite it with
                 # the ISO8601 version of the Buchungstag
                 row[-1] = "Buchungstag ISO8601"
+                if mapping != None:
+                    row.append("Text")
             else:
                 # Stop on first empty line: We are at the end of data
                 if len(row) == 0:
@@ -189,8 +206,10 @@ def fix_file(filepath, outfile):
                     raise ParserErrorException(filepath)
                 buchungstag = datetime.datetime.strptime(row[0], "%d.%m.%Y")
                 row[-1] = buchungstag.strftime("%Y-%m-%d")
-
-            row[8] = fix_multilinenote(row[8])
+                row[8] = fix_multilinenote(row[8])
+                if mapping != None:
+                    mapped_text = get_mapped_text(row, mapping)
+                    row.append(mapped_text)
 
             filewriter.writerow(row)
 
@@ -198,7 +217,7 @@ def fix_file(filepath, outfile):
 def main():
     '''main function, called when script file is executed directly'''
     args = get_args()
-    fix_file(args.csvfile, sys.stdout)
+    fix_file(args.csvfile, args.mappingfile, sys.stdout)
 
 if __name__ == "__main__":
     main()

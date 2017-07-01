@@ -53,11 +53,28 @@ class TestFixFile(unittest.TestCase):
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
         with open(out_filepath, mode="wb") as out_file:
-            fix_fiducia_csv.fix_file(in_filepath, out_file)
+            fix_fiducia_csv.fix_file(in_filepath, None, out_file)
 
         expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
         self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
         shutil.rmtree(temp_folder)
+
+    def test_02(self):
+        '''Standard test with mapping'''
+
+        temp_folder = self.gen_tempfolder()
+        in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
+        in_mapping_file_path = os.path.join(TESTSCRIPT_DIR, "mapping_sample_fiducia_data.csv")
+        out_filepath = os.path.join(temp_folder, "out.csv")
+        with open(out_filepath, mode="wb") as out_file:
+            fix_fiducia_csv.fix_file(in_filepath, in_mapping_file_path, out_file)
+
+        expected_out_filepath = os.path.join(
+            TESTSCRIPT_DIR,
+            "sample_fiducia_data_mapping_fixed.csv")
+        self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
+        shutil.rmtree(temp_folder)
+
 
 
 class TestReadMapping(unittest.TestCase):
