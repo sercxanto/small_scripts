@@ -39,7 +39,7 @@ def get_args():
         description="Fix the CSV export of fiducia driven banking websites")
     parser.add_argument("csvfile", help="CSV file to fix")
     parser.add_argument(
-        "mappingfile",
+        "--mappingfile",
         help="CSV file for simple search pattern matching.\
               If given, a column \'text\' with the mapped string will be\
               added to the output")
