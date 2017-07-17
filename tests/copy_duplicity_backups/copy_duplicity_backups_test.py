@@ -42,13 +42,15 @@ sys.path.append(SCRIPT_DIR)
 import copy_duplicity_backups # pylint: disable=import-error,wrong-import-position
 
 
-class TestNameGenerator():
+# pylint: disable=too-few-public-methods
+class TestNameGenerator(object):
     '''Helper class for tests
     Generates names for files'''
 
     def __init__(self):
         self.last_timestamp_object = None
-    
+
+    # pylint: disable=too-many-arguments
     def gen_names(self, inc_full, year, month, day, nr_vols):
         '''Generates a list of file names for a backup run
 
@@ -65,7 +67,7 @@ class TestNameGenerator():
             list of Strings.
             '''
         datetime_format = "%Y%m%dT%H%M%SZ"
-        assert inc_full == "inc" or inc_full == "full" 
+        assert inc_full == "inc" or inc_full == "full"
 
         timestamp_object = datetime.datetime(year, month, day)
         timestamp = timestamp_object.strftime(datetime_format)
@@ -75,23 +77,21 @@ class TestNameGenerator():
 
         if inc_full == "full":
             manifest = "duplicity-full." + timestamp + ".manifest.gpg"
-            signatures = ( "duplicity-full-signatures.%s.sigtar.gpg" %
-                (timestamp) )
+            signatures = ("duplicity-full-signatures.%s.sigtar.gpg" % (timestamp))
             for i in range(1, nr_vols + 1):
-                vols.append( "duplicity-full.%s.vol%d.difftar.gpg" %
-                        (timestamp, i) )
+                vols.append("duplicity-full.%s.vol%d.difftar.gpg" % (timestamp, i))
         else:
             last_timestamp = (
-                self.last_timestamp_object.strftime(datetime_format) )
-            manifest = ( "duplicity-inc.%s.to.%s.manifest.gpg" % 
-                            ( last_timestamp, timestamp) )
-            signatures = ( "duplicity-new-signatures.%s.to.%s.sigtar.gpg" %
-                ( last_timestamp, timestamp) )
+                self.last_timestamp_object.strftime(datetime_format))
+            manifest = ("duplicity-inc.%s.to.%s.manifest.gpg" %
+                        (last_timestamp, timestamp))
+            signatures = ("duplicity-new-signatures.%s.to.%s.sigtar.gpg" %
+                          (last_timestamp, timestamp))
             for i in range(1, nr_vols + 1):
                 vols.append(
-                        "duplicity-inc.%s.to.%s.vol%d.difftar.gpg" %
-                        ( last_timestamp, timestamp, i ) )
-                
+                    "duplicity-inc.%s.to.%s.vol%d.difftar.gpg" %
+                    (last_timestamp, timestamp, i))
+
         self.last_timestamp_object = timestamp_object
         result = vols
         result.append(signatures)
@@ -106,7 +106,7 @@ class TestReturnBackups(unittest.TestCase):
     def gen_tempfolder():
         '''Returns temporary folder name'''
         return tempfile.mkdtemp(
-                prefix="tmp_copy_duplicity_backups_return_backups")
+            prefix="tmp_copy_duplicity_backups_return_backups")
 
     @staticmethod
     def add_files(folder, filenames):
@@ -122,31 +122,31 @@ class TestReturnBackups(unittest.TestCase):
         '''Only one full'''
         folder = self.gen_tempfolder()
         names_in = [
-                "duplicity-full.20130101T010000Z.manifest.gpg",
-                "duplicity-full.20130101T010000Z.vol1.difftar.gpg",
-                "duplicity-full.20130101T010000Z.vol2.difftar.gpg",
-                "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
-                ]
+            "duplicity-full.20130101T010000Z.manifest.gpg",
+            "duplicity-full.20130101T010000Z.vol1.difftar.gpg",
+            "duplicity-full.20130101T010000Z.vol2.difftar.gpg",
+            "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
+            ]
         self.add_files(folder, names_in)
         result = copy_duplicity_backups.return_last_n_full_backups(folder, 3)
         self.assertEqual(sorted(names_in), sorted(result))
 
         shutil.rmtree(folder)
-    
+
     def test_02(self):
         '''One full and old incs from previous backup'''
         folder = self.gen_tempfolder()
         old_leftover = [
-"duplicity-inc.20130101T000000Z.to.20130101T000001Z.manifest.gpg",
-"duplicity-inc.20130101T000000Z.to.20130101T000001Z.vol1.difftar.gpg",
-"duplicity-new-signatures.20130101T010000Z.to.20130101T000001Z.sigtar.gpg"
-                ]
+            "duplicity-inc.20130101T000000Z.to.20130101T000001Z.manifest.gpg",
+            "duplicity-inc.20130101T000000Z.to.20130101T000001Z.vol1.difftar.gpg",
+            "duplicity-new-signatures.20130101T010000Z.to.20130101T000001Z.sigtar.gpg"
+            ]
         last_full = [
-"duplicity-full.20130101T010000Z.manifest.gpg",
-"duplicity-full.20130101T010000Z.vol1.difftar.gpg",
-"duplicity-full.20130101T010000Z.vol2.difftar.gpg",
-"duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
-                ]
+            "duplicity-full.20130101T010000Z.manifest.gpg",
+            "duplicity-full.20130101T010000Z.vol1.difftar.gpg",
+            "duplicity-full.20130101T010000Z.vol2.difftar.gpg",
+            "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
+            ]
         names_in = old_leftover + last_full
         self.add_files(folder, names_in)
 
@@ -159,24 +159,24 @@ class TestReturnBackups(unittest.TestCase):
         '''Full with incs and one old inc'''
         folder = self.gen_tempfolder()
         old_leftover = [
-"duplicity-inc.20130101T000000Z.to.20130101T000001Z.manifest.gpg",
-"duplicity-inc.20130101T000000Z.to.20130101T000001Z.vol1.difftar.gpg",
-"duplicity-new-signatures.20130101T010000Z.to.20130101T000001Z.sigtar.gpg"
-                ]
+            "duplicity-inc.20130101T000000Z.to.20130101T000001Z.manifest.gpg",
+            "duplicity-inc.20130101T000000Z.to.20130101T000001Z.vol1.difftar.gpg",
+            "duplicity-new-signatures.20130101T010000Z.to.20130101T000001Z.sigtar.gpg"
+            ]
         last_full = [
-"duplicity-full.20130101T010000Z.manifest.gpg",
-"duplicity-full.20130101T010000Z.vol1.difftar.gpg",
-"duplicity-full.20130101T010000Z.vol2.difftar.gpg",
-"duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
-                ]
+            "duplicity-full.20130101T010000Z.manifest.gpg",
+            "duplicity-full.20130101T010000Z.vol1.difftar.gpg",
+            "duplicity-full.20130101T010000Z.vol2.difftar.gpg",
+            "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
+            ]
         after_full = [
-"duplicity-inc.20130101T010000Z.to.20130102T010001Z.manifest.gpg",
-"duplicity-inc.20130101T010000Z.to.20130102T010001Z.vol1.difftar.gpg",
-"duplicity-new-signatures.20130101T010000Z.to.20130102T010001Z.sigtar.gpg",
-"duplicity-inc.20130102T010001Z.to.20130103T010000Z.manifest.gpg",
-"duplicity-inc.20130102T010001Z.to.20130103T010000Z.vol1.difftar.gpg",
-"duplicity-new-signatures.20130102T010001Z.to.20130103T010000Z.sigtar.gpg"
-                ]
+            "duplicity-inc.20130101T010000Z.to.20130102T010001Z.manifest.gpg",
+            "duplicity-inc.20130101T010000Z.to.20130102T010001Z.vol1.difftar.gpg",
+            "duplicity-new-signatures.20130101T010000Z.to.20130102T010001Z.sigtar.gpg",
+            "duplicity-inc.20130102T010001Z.to.20130103T010000Z.manifest.gpg",
+            "duplicity-inc.20130102T010001Z.to.20130103T010000Z.vol1.difftar.gpg",
+            "duplicity-new-signatures.20130102T010001Z.to.20130103T010000Z.sigtar.gpg"
+            ]
         names_in = old_leftover + last_full + after_full
         self.add_files(folder, names_in)
 
@@ -196,18 +196,18 @@ class TestReturnBackups(unittest.TestCase):
             gen.gen_names("inc", 2013, 1, 2, 1) +
             gen.gen_names("inc", 2013, 1, 3, 1) +
             gen.gen_names("inc", 2013, 1, 4, 2) +
-            gen.gen_names("inc", 2013, 1, 6, 1) )
+            gen.gen_names("inc", 2013, 1, 6, 1))
 
         full_2 = gen.gen_names("full", 2013, 1, 8, 1)
         incs_2 = (
             gen.gen_names("inc", 2013, 1, 9, 3) +
             gen.gen_names("inc", 2013, 1, 10, 4) +
-            gen.gen_names("inc", 2013, 1, 11, 2) )
+            gen.gen_names("inc", 2013, 1, 11, 2))
 
         full_3 = gen.gen_names("full", 2013, 2, 1, 1)
         incs_3 = (
             gen.gen_names("inc", 2013, 2, 3, 2) +
-            gen.gen_names("inc", 2013, 2, 4, 20) )
+            gen.gen_names("inc", 2013, 2, 4, 20))
 
 
         names_in = full_1 + incs_1 + full_2 + incs_2 + full_3 + incs_3
@@ -229,11 +229,11 @@ class TestReturnBackups(unittest.TestCase):
         # Multiple matches for a wrong file,
         # "^" / "$"  in regex necessary
         names_in = [
-                "duplicity-full.20130101T010000Z.manifest.gpg",
-                "duplicity-full.20130101T010000Z.vol1.difftar.gpg"
-                "duplicity-full.20130101T010000Z.vol2.difftar.gpg"
-                "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
-                ]
+            "duplicity-full.20130101T010000Z.manifest.gpg",
+            "duplicity-full.20130101T010000Z.vol1.difftar.gpg"
+            "duplicity-full.20130101T010000Z.vol2.difftar.gpg"
+            "duplicity-full-signatures.20130101T010000Z.sigtar.gpg"
+            ]
 
         self.add_files(folder, names_in)
 
@@ -274,13 +274,13 @@ def gen_random_files(rnd, folder, nr_files):
 
 def gen_dummy_file(file_path, nr_bytes):
     '''Write nr_bytes dummy data to file.
-    
+
     An existing file will be overwritten.
-    
+
     Args:
         file_path: Complete path to the file (folder + file name).
         nr_bytes: Number of bytes write to that files.
-        
+
     Return:
         This function does not return anything.'''
 
@@ -388,8 +388,9 @@ class TestSyncFiles(unittest.TestCase):
         with open(os.path.join(dst_dir, "empty_file"), mode="wb"):
             pass
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir, ["empty_file"],
-                False, 0)
+        copy_duplicity_backups.sync_files(
+            src_dir, dst_dir, ["empty_file"],
+            False, 0)
         dst_files = os.listdir(dst_dir)
         self.assertEqual(len(dst_files), 1)
         self.assertIn("empty_file", dst_files)
@@ -414,8 +415,9 @@ class TestSyncFiles(unittest.TestCase):
         with open(os.path.join(dst_dir, "empty_file2"), mode="wb"):
             pass
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir, ["empty_file1"],
-                False, 0)
+        copy_duplicity_backups.sync_files(
+            src_dir, dst_dir, ["empty_file1"],
+            False, 0)
         dst_files = os.listdir(dst_dir)
         self.assertEqual(len(dst_files), 1)
         self.assertIn("empty_file1", dst_files)
@@ -425,7 +427,7 @@ class TestSyncFiles(unittest.TestCase):
     def test_06(self):
         '''Same two files in source and destination, both in list,
         one differs in size'''
-        
+
         folder = self.gen_tempfolder()
 
         src_dir = os.path.join(folder, "src")
@@ -442,18 +444,19 @@ class TestSyncFiles(unittest.TestCase):
         with open(os.path.join(dst_dir, "empty_file"), mode="wb"):
             pass
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir,
-                ["nonempty_file", "empty_file"], False, 0)
+        copy_duplicity_backups.sync_files(
+            src_dir, dst_dir,
+            ["nonempty_file", "empty_file"], False, 0)
         dst_files = os.listdir(dst_dir)
         self.assertEqual(len(dst_files), 2)
         self.assertIn("nonempty_file", dst_files)
         self.assertIn("empty_file", dst_files)
         self.assertEqual(
-                os.path.getsize(os.path.join(src_dir, "nonempty_file")),
-                os.path.getsize(os.path.join(dst_dir, "nonempty_file")))
+            os.path.getsize(os.path.join(src_dir, "nonempty_file")),
+            os.path.getsize(os.path.join(dst_dir, "nonempty_file")))
         self.assertEqual(
-                os.path.getsize(os.path.join(src_dir, "empty_file")),
-                os.path.getsize(os.path.join(dst_dir, "empty_file")))
+            os.path.getsize(os.path.join(src_dir, "empty_file")),
+            os.path.getsize(os.path.join(dst_dir, "empty_file")))
 
         shutil.rmtree(folder)
 
@@ -473,11 +476,10 @@ class TestSyncFiles(unittest.TestCase):
         files_to_sync = src_files[-30:]
         for file_ in files_to_sync[:10]:
             shutil.copyfile(
-                    os.path.join(src_dir, file_),
-                    os.path.join(dst_dir, file_))
+                os.path.join(src_dir, file_),
+                os.path.join(dst_dir, file_))
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir, files_to_sync,
-                False, 0)
+        copy_duplicity_backups.sync_files(src_dir, dst_dir, files_to_sync, False, 0)
 
         self.assertTrue(cmp_src_dst_files(src_dir, dst_dir, files_to_sync))
         shutil.rmtree(folder)
@@ -499,8 +501,8 @@ class TestSyncFiles(unittest.TestCase):
         files_to_sync = src_files[-30:]
         for file_ in files_to_sync:
             shutil.copyfile(
-                    os.path.join(src_dir, file_),
-                    os.path.join(dst_dir, file_))
+                os.path.join(src_dir, file_),
+                os.path.join(dst_dir, file_))
 
         files_to_truncate = []
         files_to_truncate.append(os.path.join(dst_dir, files_to_sync[-1]))
@@ -508,12 +510,11 @@ class TestSyncFiles(unittest.TestCase):
         files_to_truncate.append(os.path.join(dst_dir, files_to_sync[-3]))
 
         for entry in files_to_truncate:
-            with open(entry, mode="ra+") as file_:
+            with open(entry, mode="r+") as file_:
                 new_size = os.path.getsize(entry)
                 file_.truncate(new_size)
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir, files_to_sync,
-                False, 0)
+        copy_duplicity_backups.sync_files(src_dir, dst_dir, files_to_sync, False, 0)
 
         self.assertTrue(cmp_src_dst_files(src_dir, dst_dir, files_to_sync))
         shutil.rmtree(folder)
@@ -535,17 +536,18 @@ class TestSyncFiles(unittest.TestCase):
 
         max_size = 60
 
-        copy_duplicity_backups.sync_files(src_dir, dst_dir,
-                ["file1", "file2", "file3"],
-                False, max_size)
+        copy_duplicity_backups.sync_files(
+            src_dir, dst_dir,
+            ["file1", "file2", "file3"],
+            False, max_size)
         dst_files = os.listdir(dst_dir)
-        
+
         self.assertEqual(len(dst_files), 2)
         dst_size = 0
         for file_ in dst_files:
             dst_size = dst_size + os.path.getsize(os.path.join(dst_dir, file_))
         self.assertTrue(dst_size <= max_size)
-        
+
         shutil.rmtree(folder)
 
 if __name__ == "__main__":
