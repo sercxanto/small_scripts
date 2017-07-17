@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # vim: set fileencoding=utf-8 :
 """ copy_duplicity_backups.py
-   
+
     Copies most recent duplicity backup files"""
 
 # The MIT License (MIT)
@@ -39,20 +39,26 @@ import sys
 def get_args():
     '''Configures command line parser and returns parsed parameters'''
     parser = argparse.ArgumentParser(
-            description="Copies most recent duplicity backup files")
+        description="Copies most recent duplicity backup files")
     parser.add_argument("src", help="Source directory")
     parser.add_argument("dst", help="Destination directory")
-    parser.add_argument("--dryrun",
-            action="store_true",
-            help="Do not write/delete files. Just print out.")
-    parser.add_argument("--maxsize",
-            help="Stop copying when dst folder has given size in MB. Default is\
+    parser.add_argument(
+        "--dryrun",
+        action="store_true",
+        help="Do not write/delete files. Just print out.")
+    parser.add_argument(
+        "--maxsize",
+        help="Stop copying when dst folder has given size in MB. Default is\
  0 (unlimited)",
-            default=0, type=int)
-    parser.add_argument("--nr", help="Number of full backups (default is 2)",
-            default=2, type=int)
-    parser.add_argument("--quiet", help="If set only errors are printed out",
-            action="store_true")
+        default=0, type=int)
+    parser.add_argument(
+        "--nr",
+        help="Number of full backups (default is 2)",
+        default=2, type=int)
+    parser.add_argument(
+        "--quiet",
+        help="If set only errors are printed out",
+        action="store_true")
 
     return parser.parse_args()
 
@@ -66,15 +72,15 @@ def ts_regex(number):
     '''Returns timestamp regex, matching group with given number, e.g.
     "timestamp1" or "timestamp2" '''
     if number != None:
-        return "(?P<timestamp" + str(number) + ">\d{8}T\d{2}\d{4}[A-Z])"
+        return "(?P<timestamp" + str(number) + r">\d{8}T\d{2}\d{4}[A-Z])"
     else:
-        return "(?P<timestamp>\d{8}T\d{2}\d{4}[A-Z])"
+        return r"(?P<timestamp>\d{8}T\d{2}\d{4}[A-Z])"
 
 
 def get_unix_timestamp(timestamp):
     '''Returns a unix timestamp for given textual duplicity timestamp'''
     time = datetime.datetime.strptime(timestamp, "%Y%m%dT%H%M%SZ")
-    return (time - datetime.datetime(1970, 1 , 1)).total_seconds()
+    return (time - datetime.datetime(1970, 1, 1)).total_seconds()
 
 
 def add_entry(dup_files, timestamp, is_full, filename):
@@ -117,25 +123,24 @@ def get_duplicity_files(directory):
             duplicity-new-signatures.timestamp1.to.timestamp2.sigtar.gpg
        timestamp example: 20130126T070058Z'''
 
-    full_prefix = "^duplicity\-full\." + ts_regex(None) + "\."
-    full_manifest = re.compile(full_prefix + "manifest\.gpg$")
-    full_difftar = re.compile(full_prefix + "vol\d+\.difftar\.gpg$")
+    full_prefix = r"^duplicity\-full\." + ts_regex(None) + r"\."
+    full_manifest = re.compile(full_prefix + r"manifest\.gpg$")
+    full_difftar = re.compile(full_prefix + r"vol\d+\.difftar\.gpg$")
     full_signatures = re.compile(
-            "^duplicity\-full-signatures\." + ts_regex(None) + "\.sigtar\.gpg$")
-    inc_prefix = ("^duplicity\-inc\." + ts_regex(1) + "\.to\."
-                    + ts_regex(2) + "\.")
-    inc_manifest = re.compile(inc_prefix + "manifest\.gpg$")
-    inc_difftar = re.compile(inc_prefix + "vol\d+\.difftar\.gpg$")
+        r"^duplicity\-full-signatures\." + ts_regex(None) + r"\.sigtar\.gpg$")
+    inc_prefix = r"^duplicity\-inc\." + ts_regex(1) + r"\.to\." + ts_regex(2) + r"\."
+    inc_manifest = re.compile(inc_prefix + r"manifest\.gpg$")
+    inc_difftar = re.compile(inc_prefix + r"vol\d+\.difftar\.gpg$")
     inc_signatures = re.compile(
-            "^duplicity\-new\-signatures\." + ts_regex(1) + "\.to\."
-            + ts_regex(2) + "\.sigtar\.gpg$" )
-    
+        r"^duplicity\-new\-signatures\." + ts_regex(1) + r"\.to\."
+        + ts_regex(2) + r"\.sigtar\.gpg$")
+
     all_files = os.listdir(directory)
     dup_files = {}
     for name in all_files:
 
         result = full_manifest.match(name)
-        if result != None :
+        if result != None:
             timestamp = get_unix_timestamp(result.group("timestamp"))
             add_entry(dup_files, timestamp, True, name)
             continue
@@ -151,19 +156,19 @@ def get_duplicity_files(directory):
             timestamp = get_unix_timestamp(result.group("timestamp"))
             add_entry(dup_files, timestamp, True, name)
             continue
-        
+
         result = inc_manifest.match(name)
         if result != None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
             add_entry(dup_files, timestamp, False, name)
             continue
-        
+
         result = inc_difftar.match(name)
         if result != None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
             add_entry(dup_files, timestamp, False, name)
             continue
-        
+
         result = inc_signatures.match(name)
         if result != None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
@@ -234,7 +239,7 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
             files_to_delete.append(dst_file)
 
     for file_ in files:
-        if not file_ in dst_files:
+        if file_ not in dst_files:
             files_to_copy.append(file_)
 
     for file_ in files_to_delete:
@@ -253,7 +258,7 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
         if (max_size > 0) and ((current_size + file_size) > max_size):
             print >> sys.stderr, "Stopping at " + src_file + " ."
             print >> sys.stderr, (
-                    "Exceeds file size limit of %d bytes." % (max_size))
+                "Exceeds file size limit of %d bytes." % (max_size))
             return 1
         current_size += file_size
         if dryrun:
