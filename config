@@ -6,6 +6,7 @@ FILES_TO_LINK=" \
     maildir_trash.sh \
     start_firefox_cleanprofile.py \
     start-ssh-agent.sh \
+    symlink_picture_list.py \
     syncthing_findconflicts.py \
     syncthing_rescan.py "
 
