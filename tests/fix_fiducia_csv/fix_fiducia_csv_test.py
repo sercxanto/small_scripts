@@ -114,7 +114,8 @@ class TestReadMapping(unittest.TestCase):
         '''read mapping_nomapping.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping_nomapping.csv")
         expected = {
-            "text": [],
+            "account": [],
+            "description": [],
             "searchterm1": [],
             "searchterm2": []
         }
@@ -125,7 +126,8 @@ class TestReadMapping(unittest.TestCase):
         '''read mapping1.csv'''
         in_mapping = os.path.join(TESTSCRIPT_DIR, "mapping1.csv")
         expected = {
-            "text":  ["text1", "text2", "text3"],
+            "account":  ["account:myname1", "account:myname2", "account:myname3"],
+            "description":  ["text1", "text2", "text3"],
             "searchterm1": ["searchterm11", "searchterm21", "searchterm31"],
             "searchterm2": ["searchterm22", "", ""]
         }
@@ -140,133 +142,145 @@ class TestGetMapped(unittest.TestCase):
         '''test empty mapping and empty input'''
         row = []
         mapping = {
-            "text": [],
+            "account": [],
+            "description": [],
             "searchterm1": [],
             "searchterm2": []
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "")
+        self.assertIsNone(calculated)
 
     def test_nomapping(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": [],
+            "account": [],
+            "description": [],
             "searchterm1": [],
             "searchterm2": []
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "")
+        self.assertIsNone(calculated)
 
     def test_nomatch(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["nomatch", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "")
+        self.assertIsNone(calculated)
 
     def test_match_first_word(self):
         '''test match for first word'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["word1", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "sometext")
+        self.assertEqual(calculated, ["some:account", "sometext"])
 
     def test_match_substring(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["wor", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "sometext")
+        self.assertEqual(calculated, ["some:account", "sometext"])
 
     def test_match_second_word(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["word2", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "sometext")
+        self.assertEqual(calculated, ["some:account", "sometext"])
 
     def test_match_second_row(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["word3", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "sometext")
+        self.assertEqual(calculated, ["some:account", "sometext"])
 
     def test_match_last_row(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["word4", "stillnomatch"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "sometext")
+        self.assertEqual(calculated, ["some:account", "sometext"])
 
     def test_match_second_mapping(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["sometext", "someothertext"],
+            "account": ["some:account", "someother:account"],
+            "description": ["sometext", "someothertext"],
             "searchterm1": ["wordx", "word2"],
             "searchterm2": ["", ""]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "someothertext")
+        self.assertEqual(calculated, ["someother:account", "someothertext"])
 
     def test_match_second_searchterm(self):
         '''test empty mapping and non matching'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["thisshouldmatch", "this should not match"],
+            "account": ["some:account", "someother:account"],
+            "description": ["thisshouldmatch", "this should not match"],
             "searchterm1": ["word1", "wordx"],
             "searchterm2": ["word2", "word2"]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "thisshouldmatch")
+        self.assertEqual(calculated, ["some:account", "thisshouldmatch"])
 
     def test_match_second_searchterm2(self):
         '''first match only'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["thisshouldmatch", "this should not match"],
+            "account": ["some:account", "someother:account"],
+            "description": ["thisshouldmatch", "this should not match"],
             "searchterm1": ["word4", "wordx"],
             "searchterm2": ["word2", "word2"]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "thisshouldmatch")
+        self.assertEqual(calculated, ["some:account", "thisshouldmatch"])
 
     def test_match_two_matches(self):
         '''only first match should return string'''
         row = ["word1 word2", "word3", "word4"]
         mapping = {
-            "text": ["thisshouldmatch", "this should not match"],
+            "account": ["some:account", "someother:account"],
+            "description": ["thisshouldmatch", "this should not match"],
             "searchterm1": ["word1", "word1"],
             "searchterm2": ["word2", "word2"]
         }
         calculated = fix_fiducia_csv.get_mapped_text(row, mapping)
-        self.assertEqual(calculated, "thisshouldmatch")
+        self.assertEqual(calculated, ["some:account", "thisshouldmatch"])
 
 
 

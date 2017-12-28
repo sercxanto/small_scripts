@@ -1,4 +1,4 @@
-"Buchungstag";"Valuta";"Auftraggeber/Zahlungsempfänger";"Empfänger/Zahlungspflichtiger";"Konto-Nr.";"IBAN";"BLZ";"BIC";"Vorgang/Verwendungszweck";"Kundenreferenz";"Währung";"Umsatz";"Buchungstag ISO8601";"Text"
-"10.06.2016";"10.06.2016";"Auftraggeber";"Empfänger";"";"DE2138139023131231";"";"BDDDD202";"SEPA-Überweisung infoTAN:123434TAN:572754 IBAN: DE21312312312321332432 BIC: BDDD202001";"";"EUR";"-1.000,00";"2016-06-10";""
-"01.06.2016";"01.06.2016";"Name";"Empfaenger.";"";"DE131283798798213";"";"GIDODPA2";"Basislastschrift my e.V. MitgliedsbeitragID 022 MREF: REFNRBEITRAGXXG0034 CRED: IDUUJDLAJLKJDdd634 IBAN: DE44444444444444409500 BIC: GENJDKDD";"";"EUR";"-20,00";"2016-06-01";"my e.V."
-"19.06.2016";"19.06.2016";"Auftraggeber";"Empfänger";"";"DE2138139023131231";"";"BDDDD202";"Einzahlung";"";"EUR";"2.100,00";"2016-06-19";""
+"Buchungstag";"Valuta";"Auftraggeber/Zahlungsempfänger";"Empfänger/Zahlungspflichtiger";"Konto-Nr.";"IBAN";"BLZ";"BIC";"Vorgang/Verwendungszweck";"Kundenreferenz";"Währung";"Umsatz";"Buchungstag ISO8601";"Account";"Description"
+"10.06.2016";"10.06.2016";"Auftraggeber";"Empfänger";"";"DE2138139023131231";"";"BDDDD202";"SEPA-Überweisung infoTAN:123434TAN:572754 IBAN: DE21312312312321332432 BIC: BDDD202001";"";"EUR";"-1.000,00";"2016-06-10";"";""
+"01.06.2016";"01.06.2016";"Name";"Empfaenger.";"";"DE131283798798213";"";"GIDODPA2";"Basislastschrift my e.V. MitgliedsbeitragID 022 MREF: REFNRBEITRAGXXG0034 CRED: IDUUJDLAJLKJDdd634 IBAN: DE44444444444444409500 BIC: GENJDKDD";"";"EUR";"-20,00";"2016-06-01";"my:evaccount";"my e.V."
+"19.06.2016";"19.06.2016";"Auftraggeber";"Empfänger";"";"DE2138139023131231";"";"BDDDD202";"Einzahlung";"";"EUR";"2.100,00";"2016-06-19";"";""

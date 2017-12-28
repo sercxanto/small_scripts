@@ -41,7 +41,7 @@ def get_args():
     parser.add_argument(
         "--mappingfile",
         help="CSV file for simple search pattern matching.\
-              If given, a column \'text\' with the mapped string will be\
+              If given, a column \'account\' and \'description\' with the mapped string will be\
               added to the output")
 
     return parser.parse_args()
@@ -76,33 +76,36 @@ def read_mapping(filepath):
 
     The file is supposed to be in CSV format:
     * the delimiter is the semicolon, without any quoting
-    * the first line must contain the row names "text;searchterm1;searchterm2"
-    * text is the resulting text
+    * the first line must contain the row names "account;description;searchterm1;searchterm2"
+    * account is the destination account name in gnucash
+    * description is the description for the transaction
     * searchterm1 is used for simple text search in all rows of the input data
     * searchtem2 may be empty. If non empty this is the second string which the
       input data is searched for
         * for a sucessfull match searchterm1 AND searchterm2 must be matched
 
     Example:
-        text;searchterm1;seachterm2
-        resulting text;search one;search two
+        account;description;searchterm1;seachterm2
+        account:name;resulting text;search one;search two
 
     The mapping is returned as dict:
 
     {
         'searchterm1': ['string1', 'string12'],
         'searchterm2': ['string2', ''],
-        'text': ['text', 'text2']
+        'description': ['text', 'text2']
+        'account' : ['accountname1', 'accountname2']
     }
 
     In case of any error an exception is thrown.
     '''
     result = {
-        "text": [],
+        "account": [],
+        "description": [],
         "searchterm1": [],
         "searchterm2": []
         }
-    expected_header = ["text", "searchterm1", "searchterm2"]
+    expected_header = ["account", "description", "searchterm1", "searchterm2"]
 
     if filepath is None or len(filepath) == 0:
         return result
@@ -115,16 +118,19 @@ def read_mapping(filepath):
                 if row != expected_header:
                     raise ParserErrorException(filepath)
             else:
-                if len(row) < 2 or len(row) > 3:
+                if len(row) < 3 or len(row) > 4:
                     raise ParserErrorException(filepath)
                 if len(row[0]) == 0:
                     raise ParserErrorException(filepath)
                 if len(row[1]) == 0:
                     raise ParserErrorException(filepath)
-                result["text"].append(row[0])
-                result["searchterm1"].append(row[1])
-                if len(row) > 2:
-                    result["searchterm2"].append(row[2])
+                if len(row[2]) == 0:
+                    raise ParserErrorException(filepath)
+                result["account"].append(row[0])
+                result["description"].append(row[1])
+                result["searchterm1"].append(row[2])
+                if len(row) > 3:
+                    result["searchterm2"].append(row[3])
                 else:
                     result["searchterm2"].append("")
         if row_nr == 0:
@@ -133,14 +139,16 @@ def read_mapping(filepath):
 
 
 def get_mapped_text(row, mapping):
-    '''Returns the mapped text for a given row and a mapping.
+    '''Returns an array with the account and description for a given row and a mapping.
 
     row: a single line, an array of strings
     mapping: see read_mapping
-    '''
-    matched_text = ""
 
-    for i_mapping in range(len(mapping["text"])):
+    Returns None in case of not found
+    '''
+    result = None
+
+    for i_mapping in range(len(mapping["account"])):
         nr_matches = 0
         nr_matches_needed = 1
         if len(mapping["searchterm2"][i_mapping]) > 0:
@@ -154,15 +162,15 @@ def get_mapped_text(row, mapping):
             if nr_matches >= nr_matches_needed:
                 break
         if nr_matches >= nr_matches_needed:
-            matched_text = mapping["text"][i_mapping]
+            result = [mapping["account"][i_mapping], mapping["description"][i_mapping]]
             break
-    return matched_text
+    return result
 
 
 def fix_file(filepath, mapping_file_path, outfile):
     '''Fix the whole CSV file, writes to outfile.
 
-    When a mapping file is given adds a field text'''
+    When a mapping file is given adds the fields account and description'''
     skip_lines = 12
     expected_header = ["Buchungstag", "Valuta", "Auftraggeber/Zahlungsempfänger", \
             "Empfänger/Zahlungspflichtiger", "Konto-Nr.", "IBAN", "BLZ", "BIC", \
@@ -192,7 +200,8 @@ def fix_file(filepath, mapping_file_path, outfile):
                 # the ISO8601 version of the Buchungstag
                 row[-1] = "Buchungstag ISO8601"
                 if mapping != None:
-                    row.append("Text")
+                    row.append("Account")
+                    row.append("Description")
             else:
                 # Stop on first empty line: We are at the end of data
                 if len(row) == 0:
@@ -209,7 +218,12 @@ def fix_file(filepath, mapping_file_path, outfile):
                 row[8] = fix_multilinenote(row[8])
                 if mapping != None:
                     mapped_text = get_mapped_text(row, mapping)
-                    row.append(mapped_text)
+                    if mapped_text != None:
+                        row.append(mapped_text[0])
+                        row.append(mapped_text[1])
+                    else:
+                        row.append("")
+                        row.append("")
 
             filewriter.writerow(row)
 

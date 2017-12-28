@@ -1,4 +1,4 @@
-text;searchterm1;searchterm2
-text1;searchterm11;searchterm22
-text2;searchterm21
-text3;searchterm31;
+account;description;searchterm1;searchterm2
+account:myname1;text1;searchterm11;searchterm22
+account:myname2;text2;searchterm21
+account:myname3;text3;searchterm31;
