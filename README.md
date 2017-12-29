@@ -48,6 +48,26 @@ Do not output anything - only in case of errors:
     ./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
 
 
+gnucash_import
+==============
+
+Yet another gnucash import script.
+
+Parses a CSV file and directly imports it into gnucash. Example usage:
+
+    gnucash_import.py csv_file myfile.gnucash "Aktiva:Barvermögen:Girokonto"
+
+The CSV file is expected to be in an defined format, containing already information on the account of the cross entry (double-accounting) and a description for the booking:
+
+    date;accountname;description;value
+    2017-01-01;abcd:efg;Some description;2.31
+    2017-01-02;xyz:abc;Some other description;1.23
+
+With the plain CSV import builtin into Gnucash the user has to confirm the account mapping based on the description.
+
+The license is GPLv2 because of linking to Gnucashs python libraries.
+
+
 symlink\_picture\_list
 ======================
 
