@@ -4,7 +4,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2017 Georg Lutz
+# Copyright (c) 2016-2018 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,6 +25,7 @@
 # THE SOFTWARE.
 
 # Standard library imports:
+import datetime
 import filecmp
 import os
 import shutil
@@ -53,7 +54,7 @@ class TestFixFile(unittest.TestCase):
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
         with open(out_filepath, mode="wb") as out_file:
-            fix_fiducia_csv.fix_file(in_filepath, None, out_file)
+            fix_fiducia_csv.fix_file(in_filepath, None, None, out_file)
 
         expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
         self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
@@ -67,7 +68,7 @@ class TestFixFile(unittest.TestCase):
         in_mapping_file_path = os.path.join(TESTSCRIPT_DIR, "mapping_sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
         with open(out_filepath, mode="wb") as out_file:
-            fix_fiducia_csv.fix_file(in_filepath, in_mapping_file_path, out_file)
+            fix_fiducia_csv.fix_file(in_filepath, in_mapping_file_path, None, out_file)
 
         expected_out_filepath = os.path.join(
             TESTSCRIPT_DIR,
@@ -75,6 +76,48 @@ class TestFixFile(unittest.TestCase):
         self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
         shutil.rmtree(temp_folder)
 
+    def test_03(self):
+        '''Startdate all records'''
+
+        temp_folder = self.gen_tempfolder()
+        in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
+        out_filepath = os.path.join(temp_folder, "out.csv")
+        with open(out_filepath, mode="wb") as out_file:
+            fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 1, 1), out_file)
+
+        expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
+        self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
+        shutil.rmtree(temp_folder)
+
+    def test_04(self):
+        '''Startdate two records'''
+
+        temp_folder = self.gen_tempfolder()
+        in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
+        out_filepath = os.path.join(temp_folder, "out.csv")
+        with open(out_filepath, mode="wb") as out_file:
+            fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 6, 5), out_file)
+
+        expected_out_filepath = os.path.join(
+            TESTSCRIPT_DIR,
+            "sample_fiducia_data_fixed_startdate_tworecords.csv")
+        self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
+        shutil.rmtree(temp_folder)
+
+    def test_05(self):
+        '''Startdate no records'''
+
+        temp_folder = self.gen_tempfolder()
+        in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
+        out_filepath = os.path.join(temp_folder, "out.csv")
+        with open(out_filepath, mode="wb") as out_file:
+            fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 6, 20), out_file)
+
+        expected_out_filepath = os.path.join(
+            TESTSCRIPT_DIR,
+            "sample_fiducia_data_fixed_startdate_norecords.csv")
+        self.assertTrue(filecmp.cmp(out_filepath, expected_out_filepath, shallow=False))
+        shutil.rmtree(temp_folder)
 
 
 class TestReadMapping(unittest.TestCase):

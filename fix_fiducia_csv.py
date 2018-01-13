@@ -6,7 +6,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2016-2017 Georg Lutz
+# Copyright (c) 2016-2018 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,6 +33,15 @@ import csv
 import sys
 
 
+def valid_date(date_):
+    '''Date validation for argparse'''
+    try:
+        return datetime.datetime.strptime(date_, "%Y-%m-%d")
+    except ValueError:
+        msg = "Not a valid date: '{0}'.".format(date_)
+        raise argparse.ArgumentTypeError(msg)
+
+
 def get_args():
     '''Configures command line parser and returns parsed parameters'''
     parser = argparse.ArgumentParser(
@@ -43,7 +52,11 @@ def get_args():
         help="CSV file for simple search pattern matching.\
               If given, a column \'account\' and \'description\' with the mapped string will be\
               added to the output")
-
+    parser.add_argument(
+        "--startdate",
+        help="Only take into account records that are younger that the given date.\
+              An ISO8601 format is expected, e.g. 2018-01-01",
+        type=valid_date)
     return parser.parse_args()
 
 
@@ -167,10 +180,13 @@ def get_mapped_text(row, mapping):
     return result
 
 
-def fix_file(filepath, mapping_file_path, outfile):
+def fix_file(filepath, mapping_file_path, start_date, outfile):
     '''Fix the whole CSV file, writes to outfile.
 
-    When a mapping file is given adds the fields account and description'''
+    filepath: Path to the input file
+    mapping_file_path: Path to the mapping file. If != None the fields account and description
+    are added to the outfile
+    start_date: Datetime object. If != None only return records that whose date is >= startdate'''
     skip_lines = 12
     expected_header = ["Buchungstag", "Valuta", "Auftraggeber/Zahlungsempfänger", \
             "Empfänger/Zahlungspflichtiger", "Konto-Nr.", "IBAN", "BLZ", "BIC", \
@@ -206,6 +222,11 @@ def fix_file(filepath, mapping_file_path, outfile):
                 # Stop on first empty line: We are at the end of data
                 if len(row) == 0:
                     break
+
+                buchungstag = datetime.datetime.strptime(row[0], "%d.%m.%Y")
+                if start_date != None and buchungstag < start_date:
+                    continue
+
                 # Put (S)oll/(H)aben info as sign into Umsatz
                 if row[-1] == "S":
                     row[-2] = "-" + row[-2]
@@ -213,7 +234,7 @@ def fix_file(filepath, mapping_file_path, outfile):
                     pass
                 else:
                     raise ParserErrorException(filepath)
-                buchungstag = datetime.datetime.strptime(row[0], "%d.%m.%Y")
+
                 row[-1] = buchungstag.strftime("%Y-%m-%d")
                 row[8] = fix_multilinenote(row[8])
                 if mapping != None:
@@ -231,7 +252,7 @@ def fix_file(filepath, mapping_file_path, outfile):
 def main():
     '''main function, called when script file is executed directly'''
     args = get_args()
-    fix_file(args.csvfile, args.mappingfile, sys.stdout)
+    fix_file(args.csvfile, args.mappingfile, args.startdate, sys.stdout)
 
 if __name__ == "__main__":
     main()
