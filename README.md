@@ -68,6 +68,22 @@ With the plain CSV import builtin into Gnucash the user has to confirm the accou
 The license is GPLv2 because of linking to Gnucashs python libraries.
 
 
+gnucash_accounts
+================
+
+Returns list of accounts defined in a gnucash file.
+
+Example:
+
+    $ ./gnucash_accounts.py gnucash.gnucash 
+    Aktiva:Barvermögen:Bargeld
+    Aktiva:Barvermögen:Girokonto
+    Aktiva:Barvermögen:Sparkonto
+    [...]
+
+The license is GPLv2 because of linking to Gnucashs python libraries.
+
+
 symlink\_picture\_list
 ======================
 
