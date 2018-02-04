@@ -3,6 +3,7 @@ FILES_TO_LINK=" \
     check_video_length.sh \
     copy_duplicity_backups.py \
     fix_fiducia_csv.py \
+    gnucash_accounts.py \
     gnucash_import.py \
     maildir_trash.sh \
     start_firefox_cleanprofile.py \
