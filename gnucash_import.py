@@ -235,6 +235,8 @@ def import_csv_file(csv_filename, gnucash_filename, src_account_name):
         result["msg"] = "The following accounts could not be found in gnucash:"
         for entry in missing_accounts:
             result["msg"] += " " + entry
+        session.end()
+        session.destroy()
         return result
 
     for entry in parsed_csv:
