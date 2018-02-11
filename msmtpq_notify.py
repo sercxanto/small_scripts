@@ -35,7 +35,8 @@ def getNrOfEntriesInQueue():
        -1 means error in call of msmtpq.'''
     result = -1
     try:
-        proc = subprocess.Popen(args=" -d", executable="msmtpq", stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(
+            args=" -d", executable="msmtpq", stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
         return result
     os.waitpid(proc.pid, 0)
@@ -50,20 +51,24 @@ def getNrOfEntriesInQueue():
 def notify(text):
     '''Sends text message to desktop'''
     debugPrint("notify: " + "\"" + text + "\"")
-    proc = subprocess.Popen("notify-send msmtpq_notify \"" + text + "\"", stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
+    proc = subprocess.Popen(
+        "notify-send msmtpq_notify \"" + text + "\"", stderr=subprocess.PIPE,
+        stdout=subprocess.PIPE, shell=True)
     for line in proc.stderr:
         line = line.strip(os.linesep)
         debugPrint("Error notify-send: " + line)
 
 
 def callMsmtpQ():
-    '''Calls msmtpQ and returns its exit code. Note that a call to msmtpQ also runs the queue automatically.'''
+    '''Calls msmtpQ and returns its exit code.
+    Note that a call to msmtpQ also runs the queue automatically.'''
     result = -1
     args = ["msmtpQ"]
     if len(sys.argv) > 1:
         args += sys.argv[1:]
     try:
-        proc = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        proc = subprocess.Popen(
+            args, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     except:
         return result
     for line in sys.stdin:
