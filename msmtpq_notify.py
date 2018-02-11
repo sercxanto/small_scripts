@@ -73,7 +73,7 @@ def call_msmtpq():
         return result
     for line in sys.stdin:
         proc.stdin.write(line)
-    (stdout, stderr) = proc.communicate()
+    proc.communicate()
     result = proc.returncode
     return result
 
