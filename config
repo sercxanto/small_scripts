@@ -6,6 +6,7 @@ FILES_TO_LINK=" \
     gnucash_accounts.py \
     gnucash_import.py \
     maildir_trash.sh \
+    msmtpq_notify.py \
     start_firefox_cleanprofile.py \
     start-ssh-agent.sh \
     symlink_picture_list.py \

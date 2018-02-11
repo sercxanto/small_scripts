@@ -84,6 +84,40 @@ Example:
 The license is GPLv2 because of linking to Gnucashs python libraries.
 
 
+msmtpq_notify.py
+================
+
+msmtpq_notify - Notifies desktop user if msmtpq has actually sent or enqueued mail
+
+When using msmtpq in front of msmtp all failed connection attempts to the
+mailserver results in the mail being silently added to the queue.
+
+While this is a desired behaviour in most cases it may be fatal when msmtp or
+the mail server is misconfigured. In this case msmtp may always fails and mail
+never becomes delivered.
+
+This script is a wrapper script which can be run itself in front of msmtQ.
+After the call to msmtpQ it informs the user about the number of entries in the
+queue. It does so by checking the queue before and after the call to "msmtpQ"
+with "msmtpq -d".
+
+So the user has the chance to be informed if something still hangs in the queue
+an can manually intervent. Alternatively the latest versions of msmtpq also
+run/flush the queue on the next call to msmtpQ.
+
+msmtpq_notify.py uses the the deskop notification daemon which is available in
+most modern Linux desktop environments. To be able to communicate with the
+daeamon you need to install notify-send before. In Ubuntu it is available in
+the package libnotify-bin.
+
+msmtpq_notify.py passes stdin and all arguments over to msmtpq and returns its
+exit code back (although the last version seems to always return with 0, even
+if msmtp reported some error). For debugging purposes create a symlink
+msmtpq_notify_debug.py. If called as msmtpq_notify_debug.py it will output
+additional traces.
+
+
+
 symlink\_picture\_list
 ======================
 
