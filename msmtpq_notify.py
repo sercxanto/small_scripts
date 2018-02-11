@@ -1,8 +1,8 @@
 #!/usr/bin/python
-#
-#    msmtpq_notify.py
-#
-#    Notifies desktop user if msmtpq has actually sent or enqueued mail
+# vim: set fileencoding=utf-8 :
+""" msmtpq_notify.py
+
+    Notifies desktop user if msmtpq has actually sent or enqueued mail"""
 #
 #    Copyright (C) 2011 Georg Lutz <georg AT NOSPAM georglutz DOT de>
 #
