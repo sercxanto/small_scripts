@@ -27,7 +27,7 @@ import sys
 def debugPrint(text):
     '''Print out debug messages when called as msmtpq_notify_debug.py (e.g. per symlink)'''
     if os.path.basename(sys.argv[0]) == "msmtpq_notify_debug.py":
-	print text
+        print text
 
 
 def getNrOfEntriesInQueue():
@@ -35,15 +35,15 @@ def getNrOfEntriesInQueue():
        -1 means error in call of msmtpq.'''
     result = -1
     try:
-	proc = subprocess.Popen(args=" -d", executable="msmtpq", stderr=subprocess.PIPE, stdout=subprocess.PIPE)
+        proc = subprocess.Popen(args=" -d", executable="msmtpq", stderr=subprocess.PIPE, stdout=subprocess.PIPE)
     except:
-	return result
-    os.waitpid(proc.pid,0)
+        return result
+    os.waitpid(proc.pid, 0)
 
     result = 0
     for line in proc.stdout:
-	if line.find("  mail id = [ ") == 0:
-	    result += 1
+        if line.find("  mail id = [ ") == 0:
+            result += 1
     return result
 
 
@@ -52,8 +52,8 @@ def notify(text):
     debugPrint("notify: " + "\"" + text + "\"")
     proc = subprocess.Popen("notify-send msmtpq_notify \"" + text + "\"", stderr=subprocess.PIPE, stdout=subprocess.PIPE, shell=True)
     for line in proc.stderr:
-	line = line.strip(os.linesep)
-	debugPrint("Error notify-send: " + line)
+        line = line.strip(os.linesep)
+        debugPrint("Error notify-send: " + line)
 
 
 def callMsmtpQ():
@@ -79,9 +79,9 @@ def callMsmtpQ():
 if __name__ == "__main__":
     nrOfEntriesBefore = getNrOfEntriesInQueue()
     if nrOfEntriesBefore < 0:
-	notify("Error in calling msmtpq. Is it installed?")
-	sys.exit(2)
-    
+        notify("Error in calling msmtpq. Is it installed?")
+        sys.exit(2)
+
     returnCode = callMsmtpQ()
     if returnCode < 0:
         notify("Error in calling msmtpQ. Is it installed?")
@@ -89,13 +89,13 @@ if __name__ == "__main__":
 
     nrOfEntriesAfter = getNrOfEntriesInQueue()
     if nrOfEntriesAfter < 0:
-	notify("Error in calling msmtpq. Check installation!")
+        notify("Error in calling msmtpq. Check installation!")
         sys.exit(2)
 
     if nrOfEntriesBefore == 0 and nrOfEntriesAfter == 0:
         notify("Sucessfully send message.")
     else:
-        notify("Messages in queue: %d." % (nrOfEntriesAfter) )
+        notify("Messages in queue: %d." % (nrOfEntriesAfter))
 
     sys.exit(returnCode)
 
