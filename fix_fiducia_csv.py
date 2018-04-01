@@ -131,14 +131,15 @@ def read_mapping(filepath):
                 if row != expected_header:
                     raise ParserErrorException(filepath)
             else:
+                print row
                 if len(row) < 3 or len(row) > 4:
-                    raise ParserErrorException(filepath)
+                    raise ParserErrorException(filepath + ", line " + str(row_nr))
                 if len(row[0]) == 0:
-                    raise ParserErrorException(filepath)
+                    raise ParserErrorException(filepath + ", line " + str(row_nr))
                 if len(row[1]) == 0:
-                    raise ParserErrorException(filepath)
+                    raise ParserErrorException(filepath + ", line " + str(row_nr))
                 if len(row[2]) == 0:
-                    raise ParserErrorException(filepath)
+                    raise ParserErrorException(filepath + ", line " + str(row_nr))
                 result["account"].append(row[0])
                 result["description"].append(row[1])
                 result["searchterm1"].append(row[2])
