@@ -32,6 +32,10 @@ import datetime
 import csv
 import sys
 
+# future module, Python 2/3 compatibility
+from builtins import str
+from builtins import range
+
 
 def valid_date(date_):
     '''Date validation for argparse'''
