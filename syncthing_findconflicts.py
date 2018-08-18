@@ -5,7 +5,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2017 Georg Lutz
+# Copyright (c) 2017-2018 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -112,19 +112,19 @@ def main():
         for entry in config:
             conflicts = find_conflict_files(entry["path"])
             for conflict in conflicts:
-                print conflict
+                print(conflict)
     else:
         first = True
         for entry in config:
             if not first:
-                print ""
-            print "Checking folder " + entry["folder_label"] + ":"
+                print("")
+            print("Checking folder " + entry["folder_label"] + ":")
             conflicts = find_conflict_files(entry["path"])
             if len(conflicts) == 0:
-                print "No conflicts found"
+                print("No conflicts found")
             else:
                 for conflict in conflicts:
-                    print "  " + conflict
+                    print("  " + conflict)
             first = False
 
 if __name__ == "__main__":
