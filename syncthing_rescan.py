@@ -2,6 +2,9 @@
 # vim: set fileencoding=utf-8 :
 """ syncthing_rescan.py
     Manually triggers a rescan of the local Syncthing instance"""
+from __future__ import print_function
+from future import standard_library
+standard_library.install_aliases()
 
 # The MIT License (MIT)
 #
@@ -28,7 +31,7 @@
 # Standard library imports:
 import argparse
 import os
-import httplib
+import http.client
 import xml.parsers.expat
 
 
@@ -91,7 +94,7 @@ def get_config():
         if in_apikey[0]:
             result["apikey"] = data
 
-    with open(filepath, "r") as filehandle:
+    with open(filepath, "rb") as filehandle:
         parser = xml.parsers.expat.ParserCreate()
         parser.StartElementHandler = cb_start_element
         parser.EndElementHandler = cb_end_element
@@ -105,19 +108,19 @@ def main():
     get_args()
     config = get_config()
     url = "http://" + config["address"] + "/rest/db/scan"
-    print "Calling " + url + ":"
+    print("Calling " + url + ":")
 
     # can't use urllib2. because it capitalizes headers, i.e. transforms
     #   request.add_header("X-API-Key", config["apikey"])
     # to
     #   request.add_header("X-Api-Key", config["apikey"])
-    conn = httplib.HTTPConnection("127.0.0.1:8384")
+    conn = http.client.HTTPConnection("127.0.0.1:8384")
     headers = {"X-API-Key": config["apikey"]}
     conn.request("POST", "/rest/db/scan", headers=headers)
     response = conn.getresponse()
-    print response.status, response.reason
+    print(response.status, response.reason)
     data = response.read()
-    print data
+    print(data)
     conn.close()
 
 if __name__ == "__main__":
