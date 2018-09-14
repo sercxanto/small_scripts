@@ -3,6 +3,7 @@
 """ msmtpq_notify.py
 
     Notifies desktop user if msmtpq has actually sent or enqueued mail"""
+from __future__ import print_function
 #
 #    Copyright (C) 2011 Georg Lutz <georg AT NOSPAM georglutz DOT de>
 #
@@ -27,7 +28,7 @@ import sys
 def debug_print(text):
     '''Print out debug messages when called as msmtpq_notify_debug.py (e.g. per symlink)'''
     if os.path.basename(sys.argv[0]) == "msmtpq_notify_debug.py":
-        print text
+        print(text)
 
 
 def get_nr_of_entries_in_queue():
