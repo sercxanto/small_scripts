@@ -25,6 +25,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
+from __future__ import print_function
+
 # Standard library imports:
 import argparse
 import os
@@ -32,7 +34,10 @@ import platform
 import shutil
 import subprocess
 import sys
-import ConfigParser
+import configparser
+
+from future import standard_library
+standard_library.install_aliases()
 
 
 def get_args():
@@ -65,7 +70,7 @@ def get_clean_profile_folder(profiles_folder, profilename):
 
     '''
     profile_path = ""
-    config = ConfigParser.RawConfigParser()
+    config = configparser.RawConfigParser()
     profiles_ini = os.path.join(profiles_folder, "profiles.ini")
     config.read(profiles_ini)
     config.sections()
@@ -76,10 +81,10 @@ def get_clean_profile_folder(profiles_folder, profilename):
     if len(profile_path) > 0:
         return os.path.join(profiles_folder, profile_path)
     else:
-        print "I could read out the profiles.ini file at " + profiles_ini + "."
-        print "But I couldn't find a profile with the name " + profilename + "."
-        print "Please create one with \"firefox --ProfileManager\" as I do not support"
-        print "profile creation of my own."
+        print("I could read out the profiles.ini file at " + profiles_ini + ".")
+        print("But I couldn't find a profile with the name " + profilename + ".")
+        print("Please create one with \"firefox --ProfileManager\" as I do not support")
+        print("profile creation of my own.")
         sys.exit(1)
 
 
@@ -97,7 +102,7 @@ def get_executable_path():
 def start_clean(profilename):
     '''Starts with the given profile name'''
     clean_profile_folder = get_clean_profile_folder(get_profiles_folder(), profilename)
-    print "profile folder: " + clean_profile_folder
+    print("profile folder: " + clean_profile_folder)
     shutil.rmtree(clean_profile_folder)
     os.mkdir(clean_profile_folder)
     executable_path = get_executable_path()
