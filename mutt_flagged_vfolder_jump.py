@@ -1,5 +1,6 @@
 #!/usr/bin/python
 """Generates mutt command file to jump to the source of a symlinked mail"""
+from __future__ import print_function
 #
 #    mutt_flagged_vfolder_jump.py
 #
@@ -87,7 +88,7 @@ def main():
     opt_cmd_file = os.path.expanduser(args.cmdfile)
 
     if not os.path.isdir(opt_vfolder):
-        print "Could not find given vfolder"
+        print("Could not find given vfolder")
         sys.exit(1)
 
     if os.path.exists(opt_cmd_file):
@@ -114,7 +115,7 @@ def main():
             sys.exit(0)
         else:
             if not found:
-                print "Could not find given email"
+                print("Could not find given email")
             # mutt waits for key press if external command returns with code != 0
             # even if wait_key is not set. This is good for us as we want to see
             # the error messages

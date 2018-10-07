@@ -1,5 +1,6 @@
 #!/usr/bin/python
 """Searches flagged mails and symlinks them to a (vfolder) maildir"""
+from __future__ import print_function
 #
 #    mutt_flagged_vfolder_link.py
 #
@@ -105,11 +106,11 @@ def main():
     opt_maildir = os.path.expanduser(args.maildir)
 
     if not is_maildir(opt_maildir):
-        print "Maildir cannot be opened"
+        print("Maildir cannot be opened")
         sys.exit(1)
 
     if not is_maildir(opt_vfolder):
-        print "VFolder is not a maildir"
+        print("VFolder is not a maildir")
         sys.exit(1)
 
     flagged_files = []
