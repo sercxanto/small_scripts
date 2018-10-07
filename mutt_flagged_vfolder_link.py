@@ -83,17 +83,11 @@ def get_flagged_files(dir_):
 
 def delete_symlinks(dir_):
     '''Delete all symlinks in a directory. Returns false on any error, otherwise true'''
-    success = True
     entries = os.listdir(dir_)
     for entry in entries:
         path = os.path.join(dir_, entry)
         if os.path.islink(path):
-            try:
-                os.remove(path)
-            except:
-                print "Could not delete " + path
-                success = False
-    return success
+            os.remove(path)
 
 
 def main():
@@ -127,22 +121,13 @@ def main():
             flagged_files.extend(list_)
 
 
-    success = delete_symlinks(os.path.join(opt_vfolder, "cur"))
-    success |= delete_symlinks(os.path.join(opt_vfolder, "new"))
+    delete_symlinks(os.path.join(opt_vfolder, "cur"))
+    delete_symlinks(os.path.join(opt_vfolder, "new"))
     i = 1 # Guarantee uniqueness of filenames
     for file_ in flagged_files:
         link_name = os.path.join(opt_vfolder, "cur", ("%05d" % i) + "_" + os.path.basename(file_))
         i += 1
-        try:
-            os.symlink(file_, link_name)
-        except:
-            print "Symlink cannot be created: " + link_name + " -> " + file_
-            success = False
-
-    if success:
-        sys.exit(0)
-    else:
-        sys.exit(1)
+        os.symlink(file_, link_name)
 
 if __name__ == "main":
     main()
