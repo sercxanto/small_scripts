@@ -57,27 +57,21 @@ def parseMaildirFlags(fileName):
 
 def isMaildir(path):
     '''Checks if given path is a valid maildir'''
-    if os.path.isdir(os.path.join(path, "cur")) and os.path.isdir(os.path.join(path, "new")):
-        return True
-    else:
-        return False
+    return os.path.isdir(os.path.join(path, "cur")) and os.path.isdir(os.path.join(path, "new"))
 
 
 def samePath(path1, path2):
     '''Returns true if two given pathes path1 and path2 point to the same location'''
-    if os.path.abspath(path1) == os.path.abspath(path2):
-        return True
-    else:
-        return False
+    return os.path.abspath(path1) == os.path.abspath(path2)
 
 
-def getFlaggedFiles(dir):
+def getFlaggedFiles(dir_):
     '''Returns a list of files in a maildir cur or new directory which have the
        F flag set'''
     flaggedFiles = []
-    entries = os.listdir(dir)
+    entries = os.listdir(dir_)
     for entry in entries:
-        path = os.path.join(dir, entry)
+        path = os.path.join(dir_, entry)
         if os.path.isfile(path):
             flags = parseMaildirFlags(path)
             if flags["F"]:
@@ -85,12 +79,12 @@ def getFlaggedFiles(dir):
     return flaggedFiles
 
 
-def deleteSymlinks(dir):
+def deleteSymlinks(dir_):
     '''Delete all symlinks in a directory. Returns false on any error, otherwise true'''
     success = True
-    entries = os.listdir(dir)
+    entries = os.listdir(dir_)
     for entry in entries:
-        path = os.path.join(dir, entry)
+        path = os.path.join(dir_, entry)
         if os.path.islink(path):
             try:
                 os.remove(path)
@@ -123,24 +117,24 @@ def main():
         sys.exit(1)
 
     flaggedFiles = []
-    for dirpath, dirnames, filenames in os.walk(opt_maildir):
+    for dirpath, _, _ in os.walk(opt_maildir):
         if isMaildir(dirpath) and not samePath(dirpath, opt_vfolder):
-            list = getFlaggedFiles(os.path.join(dirpath, "cur"))
-            flaggedFiles.extend(list)
-            list = getFlaggedFiles(os.path.join(dirpath, "new"))
-            flaggedFiles.extend(list)
+            list_ = getFlaggedFiles(os.path.join(dirpath, "cur"))
+            flaggedFiles.extend(list_)
+            list_ = getFlaggedFiles(os.path.join(dirpath, "new"))
+            flaggedFiles.extend(list_)
 
 
     success = deleteSymlinks(os.path.join(opt_vfolder, "cur"))
     success |= deleteSymlinks(os.path.join(opt_vfolder, "new"))
     i = 1 # Guarantee uniqueness of filenames
-    for file in flaggedFiles:
-        linkName = os.path.join(opt_vfolder, "cur", ("%05d" % i) + "_" + os.path.basename(file))
+    for file_ in flaggedFiles:
+        linkName = os.path.join(opt_vfolder, "cur", ("%05d" % i) + "_" + os.path.basename(file_))
         i += 1
         try:
-            os.symlink(file, linkName)
+            os.symlink(file_, linkName)
         except:
-            print "Symlink cannot be created: " + linkName + " -> " + file
+            print "Symlink cannot be created: " + linkName + " -> " + file_
             success = False
 
     if success:
