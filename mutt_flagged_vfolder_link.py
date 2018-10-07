@@ -1,10 +1,11 @@
 #!/usr/bin/python
+"""Searches flagged mails and symlinks them to a (vfolder) maildir"""
 #
 #    mutt_flagged_vfolder_link.py
 #
 #    Searches flagged mails and symlinks them to a (vfolder) maildir
 #
-#    Copyright (C) 2009 Georg Lutz <georg AT NOSPAM georglutz DOT de>
+#    Copyright (C) 2009-2018 Georg Lutz <georg AT NOSPAM georglutz DOT de>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -19,11 +20,10 @@
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-import optparse
+import argparse
 import os
 import sys
 
-VERSIONSTRING = "0.1"
 
 # See e.g. http://cr.yp.to/proto/maildir.html
 SUPPORTED_MAILDIR_FLAGS = [
@@ -100,54 +100,53 @@ def deleteSymlinks(dir):
     return success
 
 
+def main():
+    '''main function, called when script file is executed directly'''
 
-########### MAIN PROGRAM #############
+    parser = argparse.ArgumentParser()
+    parser.add_argument('maildir',
+                        help='The Maildir with the original messages')
+    parser.add_argument('vfolder',
+                        help='The virtual maildir folder')
 
-parser = optparse.OptionParser(
-    usage="%prog [options] Maildir vfolderpath",
-    version="%prog " + VERSIONSTRING + os.linesep +
-    "Copyright (C) 2010 Georg Lutz <georg AT NOSPAM georglutz DOT de")
+    args = parser.parse_args()
 
-(options, args) = parser.parse_args()
+    opt_vfolder = os.path.expanduser(args.vfolder)
+    opt_maildir = os.path.expanduser(args.maildir)
 
-if len(args) < 2:
-    parser.print_help()
-    sys.exit(2)
+    if not isMaildir(opt_maildir):
+        print "Maildir cannot be opened"
+        sys.exit(1)
 
-optMaildir = os.path.expanduser(args[0])
-optVFolder = os.path.expanduser(args[1])
+    if not isMaildir(opt_vfolder):
+        print "VFolder is not a maildir"
+        sys.exit(1)
 
-
-if not isMaildir(optMaildir):
-    print "Maildir cannot be opened"
-    sys.exit(1)
-
-if not isMaildir(optVFolder):
-    print "VFolder is not a maildir"
-    sys.exit(1)
-
-flaggedFiles = []
-for dirpath, dirnames, filenames in os.walk(optMaildir):
-    if isMaildir(dirpath) and not samePath(dirpath, optVFolder):
-        list = getFlaggedFiles(os.path.join(dirpath, "cur"))
-        flaggedFiles.extend(list)
-        list = getFlaggedFiles(os.path.join(dirpath, "new"))
-        flaggedFiles.extend(list)
+    flaggedFiles = []
+    for dirpath, dirnames, filenames in os.walk(opt_maildir):
+        if isMaildir(dirpath) and not samePath(dirpath, opt_vfolder):
+            list = getFlaggedFiles(os.path.join(dirpath, "cur"))
+            flaggedFiles.extend(list)
+            list = getFlaggedFiles(os.path.join(dirpath, "new"))
+            flaggedFiles.extend(list)
 
 
-success = deleteSymlinks(os.path.join(optVFolder, "cur"))
-success |= deleteSymlinks(os.path.join(optVFolder, "new"))
-i = 1 # Guarantee uniqueness of filenames
-for file in flaggedFiles:
-    linkName = os.path.join(optVFolder, "cur", ("%05d" % i) + "_" + os.path.basename(file))
-    i += 1
-    try:
-        os.symlink(file, linkName)
-    except:
-        print "Symlink cannot be created: " + linkName + " -> " + file
-        success = False
+    success = deleteSymlinks(os.path.join(opt_vfolder, "cur"))
+    success |= deleteSymlinks(os.path.join(opt_vfolder, "new"))
+    i = 1 # Guarantee uniqueness of filenames
+    for file in flaggedFiles:
+        linkName = os.path.join(opt_vfolder, "cur", ("%05d" % i) + "_" + os.path.basename(file))
+        i += 1
+        try:
+            os.symlink(file, linkName)
+        except:
+            print "Symlink cannot be created: " + linkName + " -> " + file
+            success = False
 
-if success:
-    sys.exit(0)
-else:
-    sys.exit(1)
+    if success:
+        sys.exit(0)
+    else:
+        sys.exit(1)
+
+if __name__ == "main":
+    main()
