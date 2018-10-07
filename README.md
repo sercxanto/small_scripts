@@ -106,6 +106,30 @@ if msmtp reported some error). For debugging purposes create a symlink
 msmtpq_notify_debug.py. If called as msmtpq_notify_debug.py it will output
 additional traces.
 
+## mutt_flagged_vfolder
+
+`mutt_flagged_vfolder_link.py` and `mutt_flagged_vfolder_jump.py` can be used to create a "virtual maildir folder" with flagged mails:
+
+A virtual maildir folder is a folder with symlinks pointing to the original flagged mail.
+
+### `mutt_flagged_vfolder_link.py MAILDIR VFOLDER`
+
+When called in the folder MAILDIR, creates a symlinked file in VFOLDER for every flagged mail.
+
+Add it to your muttrc the following way:
+
+    folder-hook . 'macro index F "<flag-message><enter-command>unset wait_key^m<sync-mailbox><shell-escape>mutt_flagged_vfolder_link.py ~/Maildir ~/Maildir/.flagged^m<enter-command>set wait_key^m"'
+
+### `mutt_flagged_vfolder_jump.py VFOLDER CMDFILE`, the message is on stdin
+
+When called in a virtual folder with symlinked mails, jumps to the original message location provided by mutt on stdin. It deletes all previous flagged emails.
+
+Add it to your muttrc the following way:
+
+    folder-hook ".*flagged*" 'macro index F "<enter-command>unset wait_key^m<pipe-entry>mutt_flagged_vfolder_jump.py ~/Maildir/.flagged ~/tmp/mutt_flagged_vfolder_jump<enter><enter-command>source ~/tmp/mutt_flagged_vfolder_jump^m<enter-command>set wait_key^m"'
+
+For the full story, read [mutt_flagged_vfolder_README.md](mutt_flagged_vfolder_README.md).
+
 ## symlink\_picture\_list
 
 Creates an ordered symlinked folder structure to pictures out of a list in a file.
