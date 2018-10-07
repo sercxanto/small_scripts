@@ -1,10 +1,8 @@
-small_scripts
-=============
+# small_scripts
 
 Simple scripts to small for own repo
 
-copy duplicity backups
-======================
+## copy duplicity backups
 
 This script copies/duplicates local [duplicity](http://duplicity.nongnu.org/)
 backup files.
@@ -21,9 +19,7 @@ version 0.6.13 (yes I know, quite old).
 
 In case of any error the scripts exits with a return code != 0.
 
-
-Usage examples
---------------
+### Usage examples
 
 Copy with standard arguments (last two full backups and associated
 incrementals), older backups / other files at dst folder will be deleted:
@@ -47,9 +43,7 @@ Do not output anything - only in case of errors:
 
     ./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
 
-
-gnucash_import
-==============
+## gnucash_import
 
 Yet another gnucash import script.
 
@@ -67,9 +61,7 @@ With the plain CSV import builtin into Gnucash the user has to confirm the accou
 
 The license is GPLv2 because of linking to Gnucashs python libraries.
 
-
-gnucash_accounts
-================
+## gnucash_accounts
 
 Returns list of accounts defined in a gnucash file.
 
@@ -83,9 +75,7 @@ Example:
 
 The license is GPLv2 because of linking to Gnucashs python libraries.
 
-
-msmtpq_notify.py
-================
+## msmtpq_notify.py
 
 msmtpq_notify - Notifies desktop user if msmtpq has actually sent or enqueued mail
 
@@ -116,10 +106,7 @@ if msmtp reported some error). For debugging purposes create a symlink
 msmtpq_notify_debug.py. If called as msmtpq_notify_debug.py it will output
 additional traces.
 
-
-
-symlink\_picture\_list
-======================
+## symlink\_picture\_list
 
 Creates an ordered symlinked folder structure to pictures out of a list in a file.
 
