@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ fix_fiducia_csv.py
 
@@ -31,10 +31,6 @@ import argparse
 import datetime
 import csv
 import sys
-
-# future module, Python 2/3 compatibility
-from builtins import str
-from builtins import range
 
 
 def valid_date(date_):
@@ -126,7 +122,7 @@ def read_mapping(filepath):
 
     if filepath is None or len(filepath) == 0:
         return result
-    with open(filepath, "rb") as filehandle:
+    with open(filepath, "r") as filehandle:
         filereader = csv.reader(filehandle, delimiter=";")
         row_nr = 0
         for row in filereader:
@@ -199,7 +195,7 @@ def fix_file(filepath, mapping_file_path, start_date, outfile):
     if mapping_file_path != None:
         mapping = read_mapping(mapping_file_path)
 
-    with open(filepath, "rb") as filehandle:
+    with open(filepath, "r", encoding="iso-8859.1") as filehandle:
         filereader = csv.reader(filehandle, delimiter=";")
         filewriter = csv.writer(outfile, delimiter=';', quoting=csv.QUOTE_ALL)
         row_nr = 0
@@ -210,7 +206,7 @@ def fix_file(filepath, mapping_file_path, start_date, outfile):
             if row_nr <= skip_lines:
                 continue
 
-            row = [x.decode("iso-8859.1").encode("utf8") for x in row]
+            #row = [x.decode("iso-8859.1").encode("utf8") for x in row]
 
             if row_nr == skip_lines + 1:
                 if row != expected_header:

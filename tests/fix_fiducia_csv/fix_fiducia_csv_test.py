@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ tests for fix_fiducia_csv.py"""
 
@@ -53,7 +53,7 @@ class TestFixFile(unittest.TestCase):
         temp_folder = self.gen_tempfolder()
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
-        with open(out_filepath, mode="wb") as out_file:
+        with open(out_filepath, mode="w", encoding="utf-8") as out_file:
             fix_fiducia_csv.fix_file(in_filepath, None, None, out_file)
 
         expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
@@ -67,7 +67,7 @@ class TestFixFile(unittest.TestCase):
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         in_mapping_file_path = os.path.join(TESTSCRIPT_DIR, "mapping_sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
-        with open(out_filepath, mode="wb") as out_file:
+        with open(out_filepath, mode="w", encoding="utf-8") as out_file:
             fix_fiducia_csv.fix_file(in_filepath, in_mapping_file_path, None, out_file)
 
         expected_out_filepath = os.path.join(
@@ -82,7 +82,7 @@ class TestFixFile(unittest.TestCase):
         temp_folder = self.gen_tempfolder()
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
-        with open(out_filepath, mode="wb") as out_file:
+        with open(out_filepath, mode="w", encoding="utf-8") as out_file:
             fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 1, 1), out_file)
 
         expected_out_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data_fixed.csv")
@@ -95,7 +95,7 @@ class TestFixFile(unittest.TestCase):
         temp_folder = self.gen_tempfolder()
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
-        with open(out_filepath, mode="wb") as out_file:
+        with open(out_filepath, mode="w", encoding="utf-8") as out_file:
             fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 6, 5), out_file)
 
         expected_out_filepath = os.path.join(
@@ -110,7 +110,7 @@ class TestFixFile(unittest.TestCase):
         temp_folder = self.gen_tempfolder()
         in_filepath = os.path.join(TESTSCRIPT_DIR, "sample_fiducia_data.csv")
         out_filepath = os.path.join(temp_folder, "out.csv")
-        with open(out_filepath, mode="wb") as out_file:
+        with open(out_filepath, mode="w", encoding="utf-8") as out_file:
             fix_fiducia_csv.fix_file(in_filepath, None, datetime.datetime(2016, 6, 20), out_file)
 
         expected_out_filepath = os.path.join(
