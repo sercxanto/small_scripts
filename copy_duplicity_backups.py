@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ copy_duplicity_backups.py
 
@@ -95,9 +95,9 @@ def add_entry(dup_files, timestamp, is_full, filename):
 
     Raises an exception on error'''
 
-    if dup_files.has_key(timestamp):
+    if timestamp in dup_files:
         assert dup_files[timestamp]["is_full"] == is_full
-        if dup_files[timestamp].has_key("files"):
+        if "files" in dup_files[timestamp]:
             dup_files[timestamp]["files"].append(filename)
         else:
             dup_files[timestamp]["files"] = [filename]
@@ -192,7 +192,7 @@ def return_last_n_full_backups(directory, nr_full):
     dup_files = get_duplicity_files(directory)
     result = []
     counter = 0
-    for key in sorted(dup_files.iterkeys(), reverse=True):
+    for key in sorted(iter(dup_files.keys()), reverse=True):
         if counter < nr_full:
             result = result + dup_files[key]["files"]
         else:
@@ -245,7 +245,7 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
     for file_ in files_to_delete:
         dst_file = os.path.join(dst_dir, file_)
         if dryrun:
-            print "Would delete " + dst_file
+            print(("Would delete " + dst_file))
         else:
             logging.info("Delete " + dst_file)
             os.unlink(dst_file)
@@ -256,13 +256,13 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
         file_size = os.path.getsize(src_file)
 
         if (max_size > 0) and ((current_size + file_size) > max_size):
-            print >> sys.stderr, "Stopping at " + src_file + " ."
-            print >> sys.stderr, (
-                "Exceeds file size limit of %d bytes." % (max_size))
+            print("Stopping at " + src_file + " .", file=sys.stderr)
+            print((
+                "Exceeds file size limit of %d bytes." % (max_size)), file=sys.stderr)
             return 1
         current_size += file_size
         if dryrun:
-            print "Would copy " + src_file + " to " + dst_file
+            print("Would copy " + src_file + " to " + dst_file)
         else:
             logging.info("Copy " + src_file + " to " + dst_file)
             shutil.copyfile(src_file, dst_file)
@@ -279,10 +279,10 @@ def main():
         logging.basicConfig(format="%(message)s", level=logging.INFO)
 
     if not os.path.isdir(args.src):
-        print >> sys.stderr, "Directory \"" + args.src + "\" not found"
+        print("Directory \"" + args.src + "\" not found", file=sys.stderr)
         sys.exit(1)
     if not os.path.isdir(args.dst):
-        print >> sys.stderr, "Directory \"" + args.src + "\" not found"
+        print("Directory \"" + args.src + "\" not found", file=sys.stderr)
         sys.exit(1)
 
     files = return_last_n_full_backups(args.src, args.nr)

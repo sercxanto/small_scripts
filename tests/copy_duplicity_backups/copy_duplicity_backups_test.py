@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ Unittests for copy_duplicity_backups """
 
@@ -267,7 +267,7 @@ def gen_random_files(rnd, folder, nr_files):
         with open(os.path.join(folder, filename), mode="wb") as file_:
             j = 0
             while j < size:
-                file_.write(chr(rnd.randint(0, 255)))
+                file_.write(bytearray([rnd.randint(0, 255)]))
                 j = j + 1
     return result
 
@@ -286,7 +286,7 @@ def gen_dummy_file(file_path, nr_bytes):
 
     with open(file_path, mode="wb") as file_:
         for i in range(0, nr_bytes):
-            file_.write(chr(i % 255))
+            file_.write(bytearray([i % 255]))
 
 
 def cmp_src_dst_files(src_dir, dst_dir, filelist):
@@ -435,13 +435,13 @@ class TestSyncFiles(unittest.TestCase):
         os.makedirs(src_dir)
         os.makedirs(dst_dir)
 
-        with open(os.path.join(src_dir, "nonempty_file"), mode="wb") as file_:
+        with open(os.path.join(src_dir, "nonempty_file"), mode="w") as file_:
             file_.write("new content")
-        with open(os.path.join(src_dir, "empty_file"), mode="wb"):
+        with open(os.path.join(src_dir, "empty_file"), mode="w"):
             pass
-        with open(os.path.join(dst_dir, "nonempty_file"), mode="wb") as file_:
+        with open(os.path.join(dst_dir, "nonempty_file"), mode="w") as file_:
             file_.write("old content, old size")
-        with open(os.path.join(dst_dir, "empty_file"), mode="wb"):
+        with open(os.path.join(dst_dir, "empty_file"), mode="w"):
             pass
 
         copy_duplicity_backups.sync_files(
