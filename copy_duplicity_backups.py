@@ -65,16 +65,14 @@ def get_args():
 
 class UnknownFileException(Exception):
     '''Exception when we detect a file not belonging to duplicity'''
-    pass
 
 
 def ts_regex(number):
     '''Returns timestamp regex, matching group with given number, e.g.
     "timestamp1" or "timestamp2" '''
-    if number != None:
+    if number is not None:
         return "(?P<timestamp" + str(number) + r">\d{8}T\d{2}\d{4}[A-Z])"
-    else:
-        return r"(?P<timestamp>\d{8}T\d{2}\d{4}[A-Z])"
+    return r"(?P<timestamp>\d{8}T\d{2}\d{4}[A-Z])"
 
 
 def get_unix_timestamp(timestamp):
@@ -140,37 +138,37 @@ def get_duplicity_files(directory):
     for name in all_files:
 
         result = full_manifest.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp"))
             add_entry(dup_files, timestamp, True, name)
             continue
 
         result = full_difftar.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp"))
             add_entry(dup_files, timestamp, True, name)
             continue
 
         result = full_signatures.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp"))
             add_entry(dup_files, timestamp, True, name)
             continue
 
         result = inc_manifest.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
             add_entry(dup_files, timestamp, False, name)
             continue
 
         result = inc_difftar.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
             add_entry(dup_files, timestamp, False, name)
             continue
 
         result = inc_signatures.match(name)
-        if result != None:
+        if result is not None:
             timestamp = get_unix_timestamp(result.group("timestamp2"))
             add_entry(dup_files, timestamp, False, name)
             continue
@@ -247,7 +245,7 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
         if dryrun:
             print(("Would delete " + dst_file))
         else:
-            logging.info("Delete " + dst_file)
+            logging.info("Delete %s", dst_file)
             os.unlink(dst_file)
 
     for file_ in files_to_copy:
@@ -255,7 +253,7 @@ def sync_files(src_dir, dst_dir, files, dryrun, max_size):
         dst_file = os.path.join(dst_dir, file_)
         file_size = os.path.getsize(src_file)
 
-        if (max_size > 0) and ((current_size + file_size) > max_size):
+        if 0 < max_size < current_size + file_size:
             print("Stopping at " + src_file + " .", file=sys.stderr)
             print((
                 "Exceeds file size limit of %d bytes." % (max_size)), file=sys.stderr)
@@ -292,7 +290,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
-
