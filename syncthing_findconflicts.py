@@ -120,7 +120,7 @@ def main():
                 print("")
             print("Checking folder " + entry["folder_label"] + ":")
             conflicts = find_conflict_files(entry["path"])
-            if len(conflicts) == 0:
+            if not conflicts:
                 print("No conflicts found")
             else:
                 for conflict in conflicts:
@@ -129,4 +129,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
