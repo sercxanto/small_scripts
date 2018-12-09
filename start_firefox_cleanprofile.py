@@ -53,10 +53,9 @@ def get_profiles_folder():
     system = platform.system()
     if system == "Windows":
         return os.path.join(os.environ["APPDATA"], "Mozilla", "Firefox")
-    elif system == "Linux":
+    if system == "Linux":
         return os.path.join(os.environ["HOME"], ".mozilla", "firefox")
-    else:
-        raise NameError("Unsupported platform")
+    raise NameError("Unsupported platform")
 
 
 def get_clean_profile_folder(profiles_folder, profilename):
@@ -78,14 +77,14 @@ def get_clean_profile_folder(profiles_folder, profilename):
         if section.startswith("Profile"):
             if config.get(section, "Name") == profilename:
                 profile_path = config.get(section, "Path")
-    if len(profile_path) > 0:
+    if not profile_path:
         return os.path.join(profiles_folder, profile_path)
-    else:
-        print("I could read out the profiles.ini file at " + profiles_ini + ".")
-        print("But I couldn't find a profile with the name " + profilename + ".")
-        print("Please create one with \"firefox --ProfileManager\" as I do not support")
-        print("profile creation of my own.")
-        sys.exit(1)
+
+    print("I could read out the profiles.ini file at " + profiles_ini + ".")
+    print("But I couldn't find a profile with the name " + profilename + ".")
+    print("Please create one with \"firefox --ProfileManager\" as I do not support")
+    print("profile creation of my own.")
+    sys.exit(1)
 
 
 def get_executable_path():
@@ -93,10 +92,9 @@ def get_executable_path():
     system = platform.system()
     if system == "Windows":
         return os.path.join(os.environ["ProgramFiles(x86)"], "Mozilla Firefox", "firefox.exe")
-    elif system == "Linux":
+    if system == "Linux":
         return "/usr/bin/firefox"
-    else:
-        raise NameError("Unsupported platform")
+    raise NameError("Unsupported platform")
 
 
 def start_clean(profilename):
@@ -117,4 +115,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
