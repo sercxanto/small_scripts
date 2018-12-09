@@ -1,14 +1,11 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ syncthing_rescan.py
     Manually triggers a rescan of the local Syncthing instance"""
-from __future__ import print_function
-from future import standard_library
-standard_library.install_aliases()
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2017 Georg Lutz
+# Copyright (c) 2017-2018 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
