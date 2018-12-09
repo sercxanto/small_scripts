@@ -1,11 +1,10 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ msmtpq_notify.py
 
     Notifies desktop user if msmtpq has actually sent or enqueued mail"""
-from __future__ import print_function
 #
-#    Copyright (C) 2011 Georg Lutz <georg AT NOSPAM georglutz DOT de>
+#    Copyright (C) 2011-2018 Georg Lutz <georg AT NOSPAM georglutz DOT de>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -104,5 +103,3 @@ if __name__ == "__main__":
         notify("Messages in queue: %d." % (NR_OF_ENTRIES_AFTER))
 
     sys.exit(RETURN_CODE)
-
-
