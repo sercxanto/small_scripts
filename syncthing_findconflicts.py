@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ syncthing_findconflicts.py
     Scans all folders of the local Syncthing instance for conflict files"""
@@ -61,7 +61,6 @@ def get_config():
     in_configuration = [False]
     depth_counter = [0]
 
-
     def cb_start_element(name, attrs):
         '''expat callback'''
 
@@ -79,9 +78,7 @@ def get_config():
         if name == "configuration" and in_configuration[0]:
             in_configuration[0] = False
 
-
-
-    with open(filepath, "r") as filehandle:
+    with open(filepath, "rb") as filehandle:
         parser = xml.parsers.expat.ParserCreate()
         parser.StartElementHandler = cb_start_element
         parser.EndElementHandler = cb_end_element
