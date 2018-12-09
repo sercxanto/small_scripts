@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 """ start_firefox_cleanprofile.py
     Starts firefox with an empty (clean) profile"""
