@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """Searches flagged mails and symlinks them to a (vfolder) maildir"""
-from __future__ import print_function
 #
 #    mutt_flagged_vfolder_link.py
 #
