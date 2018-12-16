@@ -130,5 +130,5 @@ def main():
         i += 1
         os.symlink(file_, link_name)
 
-if __name__ == "main":
+if __name__ == "__main__":
     main()
