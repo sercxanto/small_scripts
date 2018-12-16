@@ -37,7 +37,7 @@ def parse_message_id(file_):
         if len(line) < 2:
             break
         result = prog.search(line)
-        if result != None and len(result.groups()) == 1:
+        if result is not None and len(result.groups()) == 1:
             msg_id = result.groups()[0]
             break
     return msg_id.strip("<>")
@@ -95,7 +95,7 @@ def main():
         os.unlink(opt_cmd_file)
 
     msg_id = parse_message_id(sys.stdin)
-    if len(msg_id) > 0:
+    if msg_id:
         found = False
         cmd_file_written = False
         for entry in os.listdir(os.path.join(opt_vfolder, "cur")):
