@@ -1,6 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 """Generates mutt command file to jump to the source of a symlinked mail"""
-from __future__ import print_function
 #
 #    mutt_flagged_vfolder_jump.py
 #
@@ -22,6 +21,7 @@ from __future__ import print_function
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
+import email
 import os
 import re
 import sys
@@ -30,17 +30,11 @@ import sys
 def parse_message_id(file_):
     '''Returns the message id for a given file.
     It is assumed that file represents a valid RFC822 message'''
-    prog = re.compile("^Message-ID: (.+)", re.IGNORECASE)
+    msg = email.message_from_binary_file(file_)
     msg_id = ""
-    for line in file_:
-       # Stop after Header
-        if len(line) < 2:
-            break
-        result = prog.search(line)
-        if result is not None and len(result.groups()) == 1:
-            msg_id = result.groups()[0]
-            break
-    return msg_id.strip("<>")
+    if "Message-ID" in msg:
+        msg_id = msg["Message-ID"].strip("<>")
+    return msg_id
 
 
 def parse_maildir(filename):
@@ -94,6 +88,7 @@ def main():
     if os.path.exists(opt_cmd_file):
         os.unlink(opt_cmd_file)
 
+    sys.stdin = sys.stdin.detach()
     msg_id = parse_message_id(sys.stdin)
     if msg_id:
         found = False
@@ -101,7 +96,7 @@ def main():
         for entry in os.listdir(os.path.join(opt_vfolder, "cur")):
             entry = os.path.join(opt_vfolder, "cur", entry)
             if os.path.islink(entry):
-                file_ = open(entry, "r")
+                file_ = open(entry, "rb")
                 msg_id2 = parse_message_id(file_)
                 file_.close()
                 if msg_id == msg_id2:
