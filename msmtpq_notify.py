@@ -43,7 +43,7 @@ def get_nr_of_entries_in_queue():
 
     result = 0
     for line in proc.stdout:
-        if line.find("  mail id = [ ") == 0:
+        if b"  mail id = [ " in line:
             result += 1
     return result
 
@@ -72,7 +72,7 @@ def call_msmtpq():
     except:
         return result
     for line in sys.stdin:
-        proc.stdin.write(line)
+        proc.stdin.write(str.encode(line))
     proc.communicate()
     result = proc.returncode
     return result
