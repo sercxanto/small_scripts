@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
 '''smtpcheckaddresses.py accpepts a list of email addresses in a text file, one
 line per address. For each address it then opens a connection to a given host
@@ -92,23 +92,23 @@ def main():
 
         result = conn.docmd("HELO xyz.de")
         if result[0] < 200 or result[0] > 299:
-            print "Error: %s" % result[1]
+            print("Error: %s" % result[1])
         result = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
         if result[0] < 200 or result[0] > 299:
-            print "Error: %s" % result[1]
+            print("Error: %s" % result[1])
         cmd = "RCPT TO: <%s>" % address
         result = conn.docmd(cmd)
         if result[0] < 200 or result[0] > 299:
-            print "Adress NOK: %s" % address
+            print("Adress NOK: %s" % address)
         else:
-            print "Adress OK: %s" % address
+            print("Adress OK: %s" % address)
         if args.send:
-            print "Sending..."
+            print("Sending...")
             msg = build_test_message(address, args.mailfrom, str(i))
             i = i + 1
             result = conn.data(msg)
             if result[0] < 200 or result[0] > 299:
-                print "Error in data cmd: %s %s" % (result[0], result[1])
+                print("Error in data cmd: %s %s" % (result[0], result[1]))
         conn.quit()
 
 if __name__ == "__main__":
