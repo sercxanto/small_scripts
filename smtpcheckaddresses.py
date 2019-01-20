@@ -75,15 +75,8 @@ def main():
     '''main function, called when script file is executed directly'''
     args = get_args()
 
-    with open(args.file, "r") as file_:
-        line = file_.readline()
-        addresses = []
-        while line != "":
-            line = line.replace("\n", "")
-            # Skip empty lines
-            if line:
-                addresses.append(line)
-            line = file_.readline()
+    addresses = [line.rstrip('\n') for line in open(args.file, "r")]
+    addresses = [x for x in addresses if len(x) > 0]
 
     i = 0
     for address in addresses:
