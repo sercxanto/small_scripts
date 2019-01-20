@@ -83,7 +83,7 @@ def main():
         while line != "":
             line = re.sub("\n", "", line)
             # Skip empty lines
-            if len(line) > 0:
+            if line:
                 addresses.append(line)
             line = file_.readline()
 
