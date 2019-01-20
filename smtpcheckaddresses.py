@@ -87,29 +87,26 @@ def main():
 
     i = 0
     for address in addresses:
-
-        conn = smtplib.SMTP(args.host, args.port)
-
-        result = conn.docmd("HELO xyz.de")
-        if result[0] < 200 or result[0] > 299:
-            print("Error: %s" % result[1])
-        result = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
-        if result[0] < 200 or result[0] > 299:
-            print("Error: %s" % result[1])
-        cmd = "RCPT TO: <%s>" % address
-        result = conn.docmd(cmd)
-        if result[0] < 200 or result[0] > 299:
-            print("Adress NOK: %s" % address)
-        else:
-            print("Adress OK: %s" % address)
-        if args.send:
-            print("Sending...")
-            msg = build_test_message(address, args.mailfrom, str(i))
-            i = i + 1
-            result = conn.data(msg)
+        with smtplib.SMTP(args.host, args.port) as conn:
+            result = conn.docmd("HELO xyz.de")
             if result[0] < 200 or result[0] > 299:
-                print("Error in data cmd: %s %s" % (result[0], result[1]))
-        conn.quit()
+                print("Error: %s" % result[1])
+            result = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
+            if result[0] < 200 or result[0] > 299:
+                print("Error: %s" % result[1])
+            cmd = "RCPT TO: <%s>" % address
+            result = conn.docmd(cmd)
+            if result[0] < 200 or result[0] > 299:
+                print("Adress NOK: %s" % address)
+            else:
+                print("Adress OK: %s" % address)
+            if args.send:
+                print("Sending...")
+                msg = build_test_message(address, args.mailfrom, str(i))
+                i = i + 1
+                result = conn.data(msg)
+                if result[0] < 200 or result[0] > 299:
+                    print("Error in data cmd: %s %s" % (result[0], result[1]))
 
 if __name__ == "__main__":
     main()
