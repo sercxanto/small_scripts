@@ -24,9 +24,9 @@ the range 200 to 299 the email address is assumed to be "OK".'''
 #    You should have received a copy of the GNU General Public License
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import argparse
 import datetime
 import os.path
-from optparse import OptionParser
 import re
 import smtplib
 import sys
@@ -34,9 +34,37 @@ import sys
 VERSIONSTRING = "0.1"
 
 
-def build_test_message(email, str_):
+def get_args():
+    '''Configures command line parser and returns parsed parameters'''
+    parser = argparse.ArgumentParser(
+        description="Tests email server. Accepts a list of email addresses in a text\
+        file, one line per address. For each address it then opens a connection to a\
+        given host and checks the return code for the \"RCPT TO\" command. If the return\
+        code is in the range 200 to 299 the email address is assumed to be \"OK\"")
+    parser.add_argument(
+        "--mailform", help="Sets the envelope from, default to an empty string",
+        default="")
+    parser.add_argument(
+        "file",
+        help="file with mail addresses")
+    parser.add_argument(
+        "host",
+        help="hostname")
+    parser.add_argument(
+        "--port",
+        help="port, defaults to 25",
+        type=int, default=25)
+    parser.add_argument(
+        "--send",
+        action="store_true", default=False,
+        help="Actually send test emails, defaults to False")
+
+    return parser.parse_args()
+
+
+def build_test_message(email, mailfrom, str_):
     '''Builds the raw text for the mail message including the email receipent and a unique string'''
-    msg = "From: <" + options.mailfrom + ">\n"
+    msg = "From: <" + mailfrom + ">\n"
     msg += "To: <" + email + ">\n"
     # RFC822 date:
     msg += "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
@@ -49,38 +77,9 @@ def build_test_message(email, str_):
 
 ########### MAIN PROGRAM #############
 
-parser = OptionParser(
-    usage="%prog [options] --host hostname --file filename",
-    version="%prog " + VERSIONSTRING + os.linesep +
-    "Copyright (C) 2009-2019 Georg Lutz <georg AT NOSPAM georglutz DOT de")
+args = get_args()
 
-parser.add_option(
-    "", "--mailfrom",
-    default="",
-    dest="mailfrom", help="Sets the envelope from, default to an empty string")
-parser.add_option(
-    "-f", "--file",
-    default="",
-    dest="file", help="file with mail addresses")
-parser.add_option(
-    "", "--host",
-    dest="host", help="hostname", default="")
-parser.add_option(
-    "", "--port",
-    dest="port", type=int, default=25,
-    help="port, defaults to 25")
-parser.add_option(
-    "-s", "--send",
-    action="store_true", dest="send", default=False,
-    help="Actually send test emails, defaults to False")
-
-(options, args) = parser.parse_args()
-
-if (len(options.host) == 0) or (len(options.file) == 0):
-    parser.print_help()
-    sys.exit(2)
-
-with open(os.path.expanduser(options.file), "r") as file_:
+with open(os.path.expanduser(args.file), "r") as file_:
     line = file_.readline()
     addresses = []
     while line != "":
@@ -93,15 +92,15 @@ with open(os.path.expanduser(options.file), "r") as file_:
 i = 0
 for address in addresses:
     try:
-        conn = smtplib.SMTP(options.host, options.port)
+        conn = smtplib.SMTP(args.host, args.port)
     except:
-        print "Cannot connect to %s:%s" % (options.host, options.port)
+        print "Cannot connect to %s:%s" % (args.host, args.port)
     sys.exit(1)
 
     rc = conn.docmd("HELO xyz.de")
     if rc[0] < 200 or rc[0] > 299:
         print "Error: %s" % rc[1]
-    rc = conn.docmd("MAIL FROM: <" + options.mailfrom + ">")
+    rc = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
     if rc[0] < 200 or rc[0] > 299:
         print "Error: %s" % rc[1]
     cmd = "RCPT TO: <%s>" % address
@@ -110,9 +109,9 @@ for address in addresses:
         print "Adress NOK: %s" % address
     else:
         print "Adress OK: %s" % address
-    if options.send:
+    if args.send:
         print "Sending..."
-        msg = build_test_message(address, str(i))
+        msg = build_test_message(address, args.mailfrom, str(i))
         i = i + 1
         rc = conn.data(msg)
         if rc[0] < 200 or rc[0] > 299:
