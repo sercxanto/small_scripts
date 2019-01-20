@@ -75,45 +75,49 @@ def build_test_message(email, mailfrom, str_):
     msg += "The identifier for this message is " + str_
     return msg
 
-########### MAIN PROGRAM #############
 
-args = get_args()
+def main():
+    '''main function, called when script file is executed directly'''
+    args = get_args()
 
-with open(os.path.expanduser(args.file), "r") as file_:
-    line = file_.readline()
-    addresses = []
-    while line != "":
-        line = re.sub("\n", "", line)
-        # Skip empty lines
-        if len(line) > 0:
-            addresses.append(line)
+    with open(os.path.expanduser(args.file), "r") as file_:
         line = file_.readline()
+        addresses = []
+        while line != "":
+            line = re.sub("\n", "", line)
+            # Skip empty lines
+            if len(line) > 0:
+                addresses.append(line)
+            line = file_.readline()
 
-i = 0
-for address in addresses:
-    try:
-        conn = smtplib.SMTP(args.host, args.port)
-    except:
-        print "Cannot connect to %s:%s" % (args.host, args.port)
-    sys.exit(1)
+    i = 0
+    for address in addresses:
+        try:
+            conn = smtplib.SMTP(args.host, args.port)
+        except:
+            print "Cannot connect to %s:%s" % (args.host, args.port)
+        sys.exit(1)
 
-    rc = conn.docmd("HELO xyz.de")
-    if rc[0] < 200 or rc[0] > 299:
-        print "Error: %s" % rc[1]
-    rc = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
-    if rc[0] < 200 or rc[0] > 299:
-        print "Error: %s" % rc[1]
-    cmd = "RCPT TO: <%s>" % address
-    rc = conn.docmd(cmd)
-    if rc[0] < 200 or rc[0] > 299:
-        print "Adress NOK: %s" % address
-    else:
-        print "Adress OK: %s" % address
-    if args.send:
-        print "Sending..."
-        msg = build_test_message(address, args.mailfrom, str(i))
-        i = i + 1
-        rc = conn.data(msg)
+        rc = conn.docmd("HELO xyz.de")
         if rc[0] < 200 or rc[0] > 299:
-            print "Error in data cmd: %s %s" % (rc[0], rc[1])
-    conn.quit()
+            print "Error: %s" % rc[1]
+        rc = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
+        if rc[0] < 200 or rc[0] > 299:
+            print "Error: %s" % rc[1]
+        cmd = "RCPT TO: <%s>" % address
+        rc = conn.docmd(cmd)
+        if rc[0] < 200 or rc[0] > 299:
+            print "Adress NOK: %s" % address
+        else:
+            print "Adress OK: %s" % address
+        if args.send:
+            print "Sending..."
+            msg = build_test_message(address, args.mailfrom, str(i))
+            i = i + 1
+            rc = conn.data(msg)
+            if rc[0] < 200 or rc[0] > 299:
+                print "Error in data cmd: %s %s" % (rc[0], rc[1])
+        conn.quit()
+
+if __name__ == "__main__":
+    main()
