@@ -26,7 +26,6 @@ the range 200 to 299 the email address is assumed to be "OK".'''
 
 import argparse
 import datetime
-import re
 import smtplib
 
 
@@ -80,7 +79,7 @@ def main():
         line = file_.readline()
         addresses = []
         while line != "":
-            line = re.sub("\n", "", line)
+            line = line.replace("\n", "")
             # Skip empty lines
             if line:
                 addresses.append(line)
