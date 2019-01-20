@@ -34,7 +34,7 @@ import sys
 VERSIONSTRING = "0.1"
 
 
-def build_test_message(email, str):
+def build_test_message(email, str_):
     '''Builds the raw text for the mail message including the email receipent and a unique string'''
     msg = "From: <" + options.mailfrom + ">\n"
     msg += "To: <" + email + ">\n"
@@ -44,7 +44,7 @@ def build_test_message(email, str):
     msg += "Subject: smtpcheckaddresses.py mail to " + email + "\n"
     msg += "\n"
     msg += "This is an automated test mail from smtpcheckaddresses.py\n"
-    msg += "The identifier for this message is " + str
+    msg += "The identifier for this message is " + str_
     return msg
 
 ########### MAIN PROGRAM #############
@@ -80,22 +80,15 @@ if (len(options.host) == 0) or (len(options.file) == 0):
     parser.print_help()
     sys.exit(2)
 
-FILENAME = os.path.expanduser(options.file)
-try:
-    file = open(FILENAME, "r")
-except:
-    print "File \"%s\" cannot be opened" % FILENAME
-    sys.exit(1)
-
-line = file.readline()
-addresses = []
-while line != "":
-    line = re.sub("\n", "", line)
-    # Skip empty lines
-    if len(line) > 0:
-        addresses.append(line)
-    line = file.readline()
-file.close()
+with open(os.path.expanduser(options.file), "r") as file_:
+    line = file_.readline()
+    addresses = []
+    while line != "":
+        line = re.sub("\n", "", line)
+        # Skip empty lines
+        if len(line) > 0:
+            addresses.append(line)
+        line = file_.readline()
 
 i = 0
 for address in addresses:
