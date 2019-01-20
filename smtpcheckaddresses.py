@@ -26,7 +26,6 @@ the range 200 to 299 the email address is assumed to be "OK".'''
 
 import argparse
 import datetime
-import os.path
 import re
 import smtplib
 
@@ -77,7 +76,7 @@ def main():
     '''main function, called when script file is executed directly'''
     args = get_args()
 
-    with open(os.path.expanduser(args.file), "r") as file_:
+    with open(args.file, "r") as file_:
         line = file_.readline()
         addresses = []
         while line != "":
