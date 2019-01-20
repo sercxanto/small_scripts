@@ -37,7 +37,7 @@ def get_args():
         given host and checks the return code for the \"resultPT TO\" command. If the return\
         code is in the range 200 to 299 the email address is assumed to be \"OK\"")
     parser.add_argument(
-        "--mailform", help="Sets the envelope from, default to an empty string",
+        "--mailfrom", help="Sets the envelope from, default to an empty string",
         default="")
     parser.add_argument(
         "file",
@@ -95,7 +95,7 @@ def main():
         result = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
         if result[0] < 200 or result[0] > 299:
             print "Error: %s" % result[1]
-        cmd = "resultPT TO: <%s>" % address
+        cmd = "RCPT TO: <%s>" % address
         result = conn.docmd(cmd)
         if result[0] < 200 or result[0] > 299:
             print "Adress NOK: %s" % address
