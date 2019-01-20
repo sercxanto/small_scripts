@@ -130,6 +130,24 @@ Add it to your muttrc the following way:
 
 For the full story, read [mutt_flagged_vfolder_README.md](mutt_flagged_vfolder_README.md).
 
+## smtpcheckaddresses
+
+Checks given email addresses on SMTP level.
+
+The intended use is to validate a MX email server configuration when it comes
+to email addresses / domains. E.g. during a migration just before going in
+production one might to check that all configured email address are accepted
+and not bouncing.
+
+smtpcheckaddresses.py accpepts a list of email addresses in a text file, one
+line per address. For each address it then opens a connection to a given host
+and checks the return code for the "RCPT TO" command. If the return code is in
+the range 200 to 299 the email address is assumed to be "OK".
+
+Additionally when given the -s option it sends a short test email to the
+addresses so you can check that mails are really delivered locally and not
+relayed. It is wise to provide also some email addresses which must fail.
+
 ## symlink\_picture\_list
 
 Creates an ordered symlinked folder structure to pictures out of a list in a file.
