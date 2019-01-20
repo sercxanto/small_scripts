@@ -2,7 +2,7 @@
 # vim: set fileencoding=utf-8 :
 '''smtpcheckaddresses.py accpepts a list of email addresses in a text file, one
 line per address. For each address it then opens a connection to a given host
-and checks the return code for the "RCPT TO" command. If the return code is in
+and checks the return code for the "resultPT TO" command. If the return code is in
 the range 200 to 299 the email address is assumed to be "OK".'''
 #
 #    smtpcheckaddresses.py
@@ -18,7 +18,7 @@ the range 200 to 299 the email address is assumed to be "OK".'''
 #
 #    This program is distributed in the hope that it will be useful,
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
-#    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#    MEresultHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #    GNU General Public License for more details.
 #
 #    You should have received a copy of the GNU General Public License
@@ -39,7 +39,7 @@ def get_args():
     parser = argparse.ArgumentParser(
         description="Tests email server. Accepts a list of email addresses in a text\
         file, one line per address. For each address it then opens a connection to a\
-        given host and checks the return code for the \"RCPT TO\" command. If the return\
+        given host and checks the return code for the \"resultPT TO\" command. If the return\
         code is in the range 200 to 299 the email address is assumed to be \"OK\"")
     parser.add_argument(
         "--mailform", help="Sets the envelope from, default to an empty string",
@@ -98,15 +98,15 @@ def main():
             print "Cannot connect to %s:%s" % (args.host, args.port)
         sys.exit(1)
 
-        rc = conn.docmd("HELO xyz.de")
-        if rc[0] < 200 or rc[0] > 299:
-            print "Error: %s" % rc[1]
-        rc = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
-        if rc[0] < 200 or rc[0] > 299:
-            print "Error: %s" % rc[1]
-        cmd = "RCPT TO: <%s>" % address
-        rc = conn.docmd(cmd)
-        if rc[0] < 200 or rc[0] > 299:
+        result = conn.docmd("HELO xyz.de")
+        if result[0] < 200 or result[0] > 299:
+            print "Error: %s" % result[1]
+        result = conn.docmd("MAIL FROM: <" + args.mailfrom + ">")
+        if result[0] < 200 or result[0] > 299:
+            print "Error: %s" % result[1]
+        cmd = "resultPT TO: <%s>" % address
+        result = conn.docmd(cmd)
+        if result[0] < 200 or result[0] > 299:
             print "Adress NOK: %s" % address
         else:
             print "Adress OK: %s" % address
@@ -114,9 +114,9 @@ def main():
             print "Sending..."
             msg = build_test_message(address, args.mailfrom, str(i))
             i = i + 1
-            rc = conn.data(msg)
-            if rc[0] < 200 or rc[0] > 299:
-                print "Error in data cmd: %s %s" % (rc[0], rc[1])
+            result = conn.data(msg)
+            if result[0] < 200 or result[0] > 299:
+                print "Error in data cmd: %s %s" % (result[0], result[1])
         conn.quit()
 
 if __name__ == "__main__":
