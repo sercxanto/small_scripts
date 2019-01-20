@@ -1,6 +1,6 @@
 #!/usr/bin/python
 #
-#    smtpcheckaddresses.py 
+#    smtpcheckaddresses.py
 #
 #    Tests email server
 #
@@ -34,12 +34,12 @@ def buildTestMessage(email, str):
     t = "From: <" + options.mailfrom + ">\n"
     t += "To: <" + email + ">\n"
     # RFC822 date:
-    t+= "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
-    t+= "User-Agent: smtpcheckaddresses.py\n"
-    t+= "Subject: smtpcheckaddresses.py mail to " + email + "\n"
-    t+= "\n"
-    t+= "This is an automated test mail from smtpcheckaddresses.py\n"
-    t+= "The identifier for this message is " + str
+    t += "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
+    t += "User-Agent: smtpcheckaddresses.py\n"
+    t += "Subject: smtpcheckaddresses.py mail to " + email + "\n"
+    t += "\n"
+    t += "This is an automated test mail from smtpcheckaddresses.py\n"
+    t += "The identifier for this message is " + str
     return t
 
 ########### MAIN PROGRAM #############
@@ -49,20 +49,25 @@ parser = OptionParser(
     version="%prog " + VERSIONSTRING + os.linesep +
     "Copyright (C) 2009-2019 Georg Lutz <georg AT NOSPAM georglutz DOT de")
 
-parser.add_option("", "--mailfrom",
-          default="",
-          dest="mailfrom", help="Sets the envelope from, default to an empty string")
-parser.add_option("-f", "--file",
-          default="",
-          dest="file", help="file with mail addresses" )
-parser.add_option("", "--host",
-                  dest="host", help="hostname", default="")
-parser.add_option("", "--port",
-                  dest="port", type=int, default=25,
-                  help="port, defaults to 25")
-parser.add_option("-s", "--send",
-          action="store_true", dest="send", default=False,
-          help="Actually send test emails, defaults to False")
+parser.add_option(
+    "", "--mailfrom",
+    default="",
+    dest="mailfrom", help="Sets the envelope from, default to an empty string")
+parser.add_option(
+    "-f", "--file",
+    default="",
+    dest="file", help="file with mail addresses")
+parser.add_option(
+    "", "--host",
+    dest="host", help="hostname", default="")
+parser.add_option(
+    "", "--port",
+    dest="port", type=int, default=25,
+    help="port, defaults to 25")
+parser.add_option(
+    "-s", "--send",
+    action="store_true", dest="send", default=False,
+    help="Actually send test emails, defaults to False")
 
 (options, args) = parser.parse_args()
 
@@ -72,7 +77,7 @@ if (len(options.host) == 0) or (len(options.file) == 0):
 
 filename = os.path.expanduser(options.file)
 try:
-    file = open(filename,"r")
+    file = open(filename, "r")
 except:
     print "File \"%s\" cannot be opened" % filename
     sys.exit(1)
@@ -115,4 +120,3 @@ for address in addresses:
         if rc[0] < 200 or rc[0] > 299:
             print "Error in data cmd: %s %s" % (rc[0], rc[1])
     conn.quit()
-
