@@ -29,9 +29,6 @@ import datetime
 import os.path
 import re
 import smtplib
-import sys
-
-VERSIONSTRING = "0.1"
 
 
 def get_args():
@@ -92,11 +89,7 @@ def main():
 
     i = 0
     for address in addresses:
-        try:
-            conn = smtplib.SMTP(args.host, args.port)
-        except:
-            print "Cannot connect to %s:%s" % (args.host, args.port)
-        sys.exit(1)
+        conn = smtplib.SMTP(args.host, args.port)
 
         result = conn.docmd("HELO xyz.de")
         if result[0] < 200 or result[0] > 299:
