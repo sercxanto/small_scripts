@@ -29,18 +29,18 @@ import sys
 VERSIONSTRING = "0.1"
 
 
-def buildTestMessage(email, str):
+def build_test_message(email, str):
     '''Builds the raw text for the mail message including the email receipent and a unique string'''
-    t = "From: <" + options.mailfrom + ">\n"
-    t += "To: <" + email + ">\n"
+    msg = "From: <" + options.mailfrom + ">\n"
+    msg += "To: <" + email + ">\n"
     # RFC822 date:
-    t += "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
-    t += "User-Agent: smtpcheckaddresses.py\n"
-    t += "Subject: smtpcheckaddresses.py mail to " + email + "\n"
-    t += "\n"
-    t += "This is an automated test mail from smtpcheckaddresses.py\n"
-    t += "The identifier for this message is " + str
-    return t
+    msg += "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
+    msg += "User-Agent: smtpcheckaddresses.py\n"
+    msg += "Subject: smtpcheckaddresses.py mail to " + email + "\n"
+    msg += "\n"
+    msg += "This is an automated test mail from smtpcheckaddresses.py\n"
+    msg += "The identifier for this message is " + str
+    return msg
 
 ########### MAIN PROGRAM #############
 
@@ -75,11 +75,11 @@ if (len(options.host) == 0) or (len(options.file) == 0):
     parser.print_help()
     sys.exit(2)
 
-filename = os.path.expanduser(options.file)
+FILENAME = os.path.expanduser(options.file)
 try:
-    file = open(filename, "r")
+    file = open(FILENAME, "r")
 except:
-    print "File \"%s\" cannot be opened" % filename
+    print "File \"%s\" cannot be opened" % FILENAME
     sys.exit(1)
 
 line = file.readline()
@@ -114,7 +114,7 @@ for address in addresses:
         print "Adress OK: %s" % address
     if options.send:
         print "Sending..."
-        msg = buildTestMessage(address, str(i))
+        msg = build_test_message(address, str(i))
         i = i + 1
         rc = conn.data(msg)
         if rc[0] < 200 or rc[0] > 299:
