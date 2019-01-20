@@ -25,7 +25,7 @@ the range 200 to 299 the email address is assumed to be "OK".'''
 #    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import argparse
-import datetime
+import email.mime.text
 import smtplib
 
 
@@ -57,18 +57,18 @@ def get_args():
     return parser.parse_args()
 
 
-def build_test_message(email, mailfrom, str_):
+def build_test_message(mailto, mailfrom, str_):
     '''Builds the raw text for the mail message including the email receipent and a unique string'''
-    msg = "From: <" + mailfrom + ">\n"
-    msg += "To: <" + email + ">\n"
-    # RFC822 date:
-    msg += "Date: " + datetime.datetime.now().strftime("%a, %d %b %Y %H:%M:%S %z") + "\n"
-    msg += "User-Agent: smtpcheckaddresses.py\n"
-    msg += "Subject: smtpcheckaddresses.py mail to " + email + "\n"
-    msg += "\n"
-    msg += "This is an automated test mail from smtpcheckaddresses.py\n"
-    msg += "The identifier for this message is " + str_
-    return msg
+    msg = email.mime.text.MIMEText(
+        "This is an automated test mail from smtpcheckaddresses.py\n"
+        "The identifier for this message is " + str_)
+
+    msg["From"] = email.utils.formataddr(("", mailfrom))
+    msg["To"] = email.utils.formataddr(("", mailto))
+    msg["Date"] = email.utils.formatdate()
+    msg["User-Agent"] = "smtpcheckaddresses.py"
+    msg["Subject"] = "smtpcheckaddresses.py mail to " + mailto
+    return msg.as_string()
 
 
 def main():
@@ -87,6 +87,7 @@ def main():
 
     i = 0
     for address in addresses:
+
         conn = smtplib.SMTP(args.host, args.port)
 
         result = conn.docmd("HELO xyz.de")
