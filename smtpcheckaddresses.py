@@ -4,7 +4,7 @@
 #
 #    Tests email server
 #
-#    Copyright (C) 2009 Georg Lutz <georg AT NOSPAM georglutz DOT de>
+#    Copyright (C) 2009-2019 Georg Lutz <georg AT NOSPAM georglutz DOT de>
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
@@ -45,24 +45,24 @@ def buildTestMessage(email, str):
 ########### MAIN PROGRAM #############
 
 parser = OptionParser(
-	usage="%prog [options] --host hostname --file filename",
-	version="%prog " + VERSIONSTRING + os.linesep +
-	"Copyright (C) 2009 Georg Lutz <georg AT NOSPAM georglutz DOT de")
+    usage="%prog [options] --host hostname --file filename",
+    version="%prog " + VERSIONSTRING + os.linesep +
+    "Copyright (C) 2009-2019 Georg Lutz <georg AT NOSPAM georglutz DOT de")
 
 parser.add_option("", "--mailfrom",
-		  default="",
-		  dest="mailfrom", help="Sets the envelope from, default to an empty string")
+          default="",
+          dest="mailfrom", help="Sets the envelope from, default to an empty string")
 parser.add_option("-f", "--file",
-		  default="",
-		  dest="file", help="file with mail addresses" )
+          default="",
+          dest="file", help="file with mail addresses" )
 parser.add_option("", "--host",
                   dest="host", help="hostname", default="")
 parser.add_option("", "--port",
                   dest="port", type=int, default=25,
                   help="port, defaults to 25")
 parser.add_option("-s", "--send",
-		  action="store_true", dest="send", default=False,
-		  help="Actually send test emails, defaults to False")
+          action="store_true", dest="send", default=False,
+          help="Actually send test emails, defaults to False")
 
 (options, args) = parser.parse_args()
 
@@ -83,36 +83,36 @@ while line != "":
     line = re.sub("\n", "", line)
     # Skip empty lines
     if len(line) > 0:
-	addresses.append(line)
+        addresses.append(line)
     line = file.readline()
 file.close()
 
 i = 0
 for address in addresses:
     try:
-	conn = smtplib.SMTP(options.host, options.port)
+        conn = smtplib.SMTP(options.host, options.port)
     except:
-	print "Cannot connect to %s:%s" % (options.host, options.port)
-	sys.exit(1)
+        print "Cannot connect to %s:%s" % (options.host, options.port)
+    sys.exit(1)
 
     rc = conn.docmd("HELO xyz.de")
     if rc[0] < 200 or rc[0] > 299:
-	print "Error: %s" % rc[1]
+        print "Error: %s" % rc[1]
     rc = conn.docmd("MAIL FROM: <" + options.mailfrom + ">")
     if rc[0] < 200 or rc[0] > 299:
-	print "Error: %s" % rc[1]
+        print "Error: %s" % rc[1]
     cmd = "RCPT TO: <%s>" % address
     rc = conn.docmd(cmd)
     if rc[0] < 200 or rc[0] > 299:
-	print "Adress NOK: %s" % address
+        print "Adress NOK: %s" % address
     else:
-	print "Adress OK: %s" % address
-	if options.send:
-	    print "Sending..."
-	    msg = buildTestMessage(address, str(i))
-	    i = i + 1
-	    rc = conn.data(msg)
-	    if rc[0] < 200 or rc[0] > 299:
-		print "Error in data cmd: %s %s" % (rc[0], rc[1])
+        print "Adress OK: %s" % address
+    if options.send:
+        print "Sending..."
+        msg = buildTestMessage(address, str(i))
+        i = i + 1
+        rc = conn.data(msg)
+        if rc[0] < 200 or rc[0] > 299:
+            print "Error in data cmd: %s %s" % (rc[0], rc[1])
     conn.quit()
 
