@@ -3,6 +3,7 @@ FILES_TO_LINK=" \
     check_video_length.sh \
     copy_duplicity_backups.py \
     fix_fiducia_csv.py \
+    get_clip_list.py \
     gnucash_accounts.py \
     gnucash_import.py \
     maildir_trash.sh \
