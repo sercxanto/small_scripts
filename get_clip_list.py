@@ -28,6 +28,7 @@
 # Standard library imports:
 import argparse
 import csv
+import datetime
 import distutils.spawn
 import json
 import logging
@@ -88,6 +89,7 @@ def get_clips_info(folder, filelist):
     Parameters:
 
     filelist: List of files as ommited by get_file_list
+    folder: Base folder of files
 
     Returns:
 
@@ -95,12 +97,14 @@ def get_clips_info(folder, filelist):
        {
            filename: "abc",
            size_mb: 1.2,
-           duration_s: 60
+           duration_s: 60,
+           timestamp: "2019-01-01 13:14:01"
        },
        {
            filename: "abcd",
            size_mb: 2.1,
-           duration_s: 30
+           duration_s: 30,
+           timestamp: "2019-01-01 13:15:01"
        }
     ]
     '''
@@ -115,7 +119,14 @@ def get_clips_info(folder, filelist):
         if json_info != None:
             json_decoded = json.loads(json_info.decode())
             info["duration_s"] = json_decoded["streams"][0]["duration"]
-
+            try:
+                # creation_time is something like "2019-04-16T19:33:33.000000Z"
+                timestamp_format = "%Y-%m-%dT%H:%M:%S.%fZ"
+                info["timestamp"] = datetime.datetime.strptime(
+                    json_decoded["streams"][0]['tags']['creation_time'],
+                    timestamp_format)
+            except KeyError:
+                logging.warning("Cannot parse creation_time")
         result.append(info)
     return result
 
@@ -124,7 +135,7 @@ def convert_clips_info_to_csv(clips_infos, csvfile):
     '''Convert clips_infos as returned by get_clips_info to csvfile'''
 
     with open(csvfile, 'w', newline='') as file_:
-        fieldnames = ["filename", "size_mb", "duration_s"]
+        fieldnames = ["filename", "size_mb", "duration_s", "timestamp"]
         writer = csv.DictWriter(file_, fieldnames=fieldnames, restval="N/A", delimiter=";")
         writer.writeheader()
         for clip_info in clips_infos:
