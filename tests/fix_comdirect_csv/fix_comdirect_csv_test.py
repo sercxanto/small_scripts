@@ -170,5 +170,36 @@ class TestGiroReader(unittest.TestCase):
         out_record = giro_reader.convert_record(in_record)
         self.assertDictEqual(out_record, out_record_expected)
 
+
+class TestVisaReader(unittest.TestCase):
+    '''VisaReader class'''
+
+    def test_01(self):
+        '''Standard test'''
+
+
+        in_record = {
+            "buchungstag": "31.10.2019",
+            "umsatztag": "30.10.2019",
+            "vorgang": "Visa-Umsatz",
+            "referenz": "1234567890",
+            "buchungstext": " Der Buchungstext ohne weitere Infos ",
+            "umsatz": "-105,75"
+        }
+
+        out_record_expected = {
+            "date": datetime.date(2019, 10, 31),
+            "valuta": datetime.date(2019, 10, 30),
+            "initiator": None,
+            "payee": None,
+            "info": "Der Buchungstext ohne weitere",
+            "memo": " Der Buchungstext ohne weitere Infos ",
+            "amount": -105.75,
+        }
+
+        visa_reader = fix_comdirect_csv.VisaReader()
+        out_record = visa_reader.convert_record(in_record)
+        self.assertDictEqual(out_record, out_record_expected)
+
 if __name__ == "__main__":
     unittest.main()

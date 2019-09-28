@@ -161,6 +161,7 @@ class GiroReader(FormatReader):
         split_info = split_buchungstext(list_of_fields, in_record["buchungstext"])
 
         out_record["initiator"] = split_info.get("Auftraggeber")
+        out_record["payee"] = None
 
         if "Buchungstext" in split_info:
             out_record["info"] = get_first_n_words(3, split_info["Buchungstext"])
@@ -200,11 +201,32 @@ class VisaReader(FormatReader):
     @staticmethod
     def is_valid_header(header):
         expected_header = [
-            "Buchungstag", "Wertstellung (Valuta)", "Vorgang", "Buchungstext", "Umsatz in EUR", ""]
+            "Buchungstag", "Umsatztag", "Vorgang", "Referenz", "Buchungstext", "Umsatz in EUR", ""]
         return header == expected_header
 
+    @staticmethod
+    def convert_row_to_record(row):
+        '''Converts a single CSV row to a record
+        '''
+        record = {}
+        record["buchungstag"] = row[0]
+        record["umsatztag"] = row[1]
+        record["vorgang"] = row[2]
+        record["referenz"] = row[3]
+        record["buchungstext"] = row[4]
+        record["umsatz"] = row[5]
+        return record
+
     def convert_record(self, in_record):
-        return {}
+        out_record = {}
+        out_record["date"] = parse_csv_date(in_record["buchungstag"])
+        out_record["valuta"] = parse_csv_date(in_record["umsatztag"])
+        out_record["amount"] = convert_umsatz(in_record["umsatz"])
+        out_record["memo"] = in_record["buchungstext"]
+        out_record["info"] = get_first_n_words(4, in_record["buchungstext"].strip())
+        out_record["initiator"] = None
+        out_record["payee"] = None
+        return out_record
 
 
 def split_buchungstext(list_of_fields, buchungstext):
@@ -304,7 +326,7 @@ def convert_internal_to_homebank(in_record):
     homebank["date"] = in_record["date"].strftime("%Y-%m-%d")
     homebank["payment"] = 0
     homebank["info"] = in_record["info"]
-    if "payee" in in_record:
+    if in_record["payee"]:
         homebank["payee"] = in_record["payee"]["name"]
     homebank["memo"] = in_record["memo"]
     homebank["amount"] = str(in_record["amount"])
@@ -340,7 +362,10 @@ def fix_file(filepath, output_format, outfile):
                     logging.info("Found giro format header in line %d", row_nr)
                     format_reader = GiroReader()
                     in_data = True
-
+                elif VisaReader.is_valid_header(row):
+                    logging.info("Found visa format header in line %d", row_nr)
+                    format_reader = VisaReader()
+                    in_data = True
             elif in_data and format_reader:
                 if row:
                     logging.info("Processing line %d", row_nr)
