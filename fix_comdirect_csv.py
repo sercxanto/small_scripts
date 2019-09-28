@@ -86,6 +86,23 @@ class FormatReader(object):
     def convert_record(self, in_record):
         '''Converts the record to the internal format.'''
 
+    @staticmethod
+    def get_first_n_words(number, text):
+        '''Return the first n space seperated words from a text'''
+        return " ".join(text.split(" ")[0:number])
+
+    @staticmethod
+    def convert_umsatz(umsatz):
+        '''Convert umsatz numbers to float
+
+        Paramters:
+
+        umsatz: Umsatz as in the CSV file as string
+
+        umsatz has "," as decimal seperator and "." as thousand seperator
+        '''
+        return float(umsatz.replace(".", "").replace(",", "."))
+
 
 class GiroReader(FormatReader):
     '''Format reader for the VISA card format'''
@@ -110,6 +127,65 @@ class GiroReader(FormatReader):
         record["buchungstext"] = row[3]
         record["umsatz"] = row[4]
         return record
+
+    @staticmethod
+    def split_buchungstext(list_of_fields, buchungstext):
+        '''Split buchungstext according to list_of_fields
+
+        Example:
+
+        list_of_fields: ["first", "second", "third"]
+        buchungstext: "first:abcfirstsecond:abcsecond third:abcthird"
+
+        Result:
+
+        {
+            "first": "abcfirst",
+            "second": "abcsecond",
+            "third": "abcthird"
+        }
+        '''
+
+        # Store the found fieldnames in the following dict:
+        #
+        # * key: start of where field has been found
+        # * value: name of the field,
+        #
+        # e.g.:
+        # {
+        #      0: "first",
+        #     14: "second",
+        #     31: "third"
+        # }
+        field_start_positions = {}
+        for field_name in list_of_fields:
+            pos = buchungstext.find(field_name + ":")
+            if pos >= 0:
+                field_start_positions[pos] = field_name
+
+        stop_loop = False
+        iterator = iter(sorted(field_start_positions))
+
+        try:
+            field_start_position = next(iterator)
+        except StopIteration:
+            stop_loop = True
+
+        result = {}
+
+        while not stop_loop:
+            field_name = field_start_positions[field_start_position]
+            value_start_position = field_start_position + len(field_name) + 1
+            try:
+                field_start_position = next(iterator)
+                value_end_position = field_start_position
+            except StopIteration:
+                stop_loop = True
+                value_end_position = len(buchungstext)
+            value = buchungstext[value_start_position:value_end_position].strip()
+            result[field_name] = value
+
+        return result
 
     def convert_record(self, in_record):
         '''Convert a single record from in_record to internal format
@@ -152,19 +228,19 @@ class GiroReader(FormatReader):
         # Simple part:
         out_record["date"] = parse_csv_date(in_record["buchungstag"])
         out_record["valuta"] = parse_csv_date(in_record["valuta"])
-        out_record["amount"] = convert_umsatz(in_record["umsatz"])
+        out_record["amount"] = self.convert_umsatz(in_record["umsatz"])
         out_record["memo"] = in_record["buchungstext"]
 
         # Split fields:
         list_of_fields = [
             "Auftraggeber", "Buchungstext", "Empfänger", "Kto/IBAN", "BLZ/BIC"]
-        split_info = split_buchungstext(list_of_fields, in_record["buchungstext"])
+        split_info = self.split_buchungstext(list_of_fields, in_record["buchungstext"])
 
         out_record["initiator"] = split_info.get("Auftraggeber")
         out_record["payee"] = None
 
         if "Buchungstext" in split_info:
-            out_record["info"] = get_first_n_words(3, split_info["Buchungstext"])
+            out_record["info"] = self.get_first_n_words(3, split_info["Buchungstext"])
         if "Empfänger" in split_info:
             out_record["payee"] = {}
             out_record["payee"]["name"] = split_info["Empfänger"]
@@ -186,7 +262,7 @@ class GiroReader(FormatReader):
                     if in_record["vorgang"] == "Kartenverfügung":
                         out_record["payee"] = {}
                         out_record["payee"]["name"] = \
-                            get_first_n_words(4, split_info["Buchungstext"])
+                            self.get_first_n_words(4, split_info["Buchungstext"])
                         out_record["payee"]["account_id"] = None
                         out_record["payee"]["bic"] = None
         return out_record
@@ -221,88 +297,12 @@ class VisaReader(FormatReader):
         out_record = {}
         out_record["date"] = parse_csv_date(in_record["buchungstag"])
         out_record["valuta"] = parse_csv_date(in_record["umsatztag"])
-        out_record["amount"] = convert_umsatz(in_record["umsatz"])
+        out_record["amount"] = self.convert_umsatz(in_record["umsatz"])
         out_record["memo"] = in_record["buchungstext"]
-        out_record["info"] = get_first_n_words(4, in_record["buchungstext"].strip())
+        out_record["info"] = self.get_first_n_words(4, in_record["buchungstext"].strip())
         out_record["initiator"] = None
         out_record["payee"] = None
         return out_record
-
-
-def split_buchungstext(list_of_fields, buchungstext):
-    '''Split buchungstext according to list_of_fields
-
-    Example:
-
-    list_of_fields: ["first", "second", "third"]
-    buchungstext: "first:abcfirstsecond:abcsecond third:abcthird"
-
-    Result:
-
-    {
-        "first": "abcfirst",
-        "second": "abcsecond",
-        "third": "abcthird"
-    }
-    '''
-
-    # Store the found fieldnames in the following dict:
-    #
-    # * key: start of where field has been found
-    # * value: name of the field,
-    #
-    # e.g.:
-    # {
-    #      0: "first",
-    #     14: "second",
-    #     31: "third"
-    # }
-    field_start_positions = {}
-    for field_name in list_of_fields:
-        pos = buchungstext.find(field_name + ":")
-        if pos >= 0:
-            field_start_positions[pos] = field_name
-
-    stop_loop = False
-    iterator = iter(sorted(field_start_positions))
-
-    try:
-        field_start_position = next(iterator)
-    except StopIteration:
-        stop_loop = True
-
-    result = {}
-
-    while not stop_loop:
-        field_name = field_start_positions[field_start_position]
-        value_start_position = field_start_position + len(field_name) + 1
-        try:
-            field_start_position = next(iterator)
-            value_end_position = field_start_position
-        except StopIteration:
-            stop_loop = True
-            value_end_position = len(buchungstext)
-        value = buchungstext[value_start_position:value_end_position].strip()
-        result[field_name] = value
-
-    return result
-
-
-def get_first_n_words(number, text):
-    '''Return the first n space seperated words from a text'''
-    return " ".join(text.split(" ")[0:number])
-
-
-def convert_umsatz(umsatz):
-    '''Convert umsatz numbers to float
-
-    Paramters:
-
-    umsatz: Umsatz as in the CSV file as string
-
-    umsatz has "," as decimal seperator and "." as thousand seperator
-    '''
-    return float(umsatz.replace(".", "").replace(",", "."))
 
 
 def convert_internal_to_homebank(in_record):

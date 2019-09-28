@@ -54,7 +54,7 @@ class TestSplitBuchungstext(unittest.TestCase):
             "third": "abcthird"
         }
 
-        result = fix_comdirect_csv.split_buchungstext(list_of_fields, buchungstext)
+        result = fix_comdirect_csv.GiroReader.split_buchungstext(list_of_fields, buchungstext)
         self.assertDictEqual(result, expected_result)
 
     def test_02(self):
@@ -69,7 +69,7 @@ class TestSplitBuchungstext(unittest.TestCase):
             "third": "abcthird"
         }
 
-        result = fix_comdirect_csv.split_buchungstext(list_of_fields, buchungstext)
+        result = fix_comdirect_csv.GiroReader.split_buchungstext(list_of_fields, buchungstext)
         self.assertDictEqual(result, expected_result)
 
     def test_03(self):
@@ -84,7 +84,7 @@ class TestSplitBuchungstext(unittest.TestCase):
             "third": "abcthird"
         }
 
-        result = fix_comdirect_csv.split_buchungstext(list_of_fields, buchungstext)
+        result = fix_comdirect_csv.GiroReader.split_buchungstext(list_of_fields, buchungstext)
         self.assertDictEqual(result, expected_result)
 
     def test_04(self):
@@ -99,7 +99,7 @@ class TestSplitBuchungstext(unittest.TestCase):
             "third": "abcthird"
         }
 
-        result = fix_comdirect_csv.split_buchungstext(list_of_fields, buchungstext)
+        result = fix_comdirect_csv.GiroReader.split_buchungstext(list_of_fields, buchungstext)
         self.assertDictEqual(result, expected_result)
 
 
