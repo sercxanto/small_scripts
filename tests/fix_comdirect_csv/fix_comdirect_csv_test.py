@@ -103,8 +103,8 @@ class TestSplitBuchungstext(unittest.TestCase):
         self.assertDictEqual(result, expected_result)
 
 
-class TestConvertRecordToInternal(unittest.TestCase):
-    '''convert_record_to_internal function'''
+class TestGiroReader(unittest.TestCase):
+    '''GiroReader class'''
 
     def test_01(self):
         '''Standard test'''
@@ -132,7 +132,8 @@ class TestConvertRecordToInternal(unittest.TestCase):
             "amount": -139.40,
         }
 
-        out_record = fix_comdirect_csv.convert_record_to_internal(in_record)
+        giro_reader = fix_comdirect_csv.GiroReader()
+        out_record = giro_reader.convert_record(in_record)
         self.assertEqual(out_record["date"], out_record_expected["date"])
         self.assertEqual(out_record["valuta"], out_record_expected["valuta"])
         self.assertEqual(out_record["amount"], out_record_expected["amount"])
@@ -165,7 +166,8 @@ class TestConvertRecordToInternal(unittest.TestCase):
             "memo": " Buchungstext: IKEA DT. NL ORTORTORTORT//ORTORTORT 2019-08-30T14:58:04 KFN 1 Ref. 3XY7515557812479/39702 ",
             "amount": -48.91,
         }
-        out_record = fix_comdirect_csv.convert_record_to_internal(in_record)
+        giro_reader = fix_comdirect_csv.GiroReader()
+        out_record = giro_reader.convert_record(in_record)
         self.assertDictEqual(out_record, out_record_expected)
 
 if __name__ == "__main__":

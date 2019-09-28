@@ -70,6 +70,142 @@ def parse_csv_date(date_string):
         return None
 
 
+class FormatReader(object):
+    '''Base class for formats'''
+
+    @staticmethod
+    def is_valid_header(header):
+        '''Checks if the header is the valid header for the format.
+
+        Returns True if it matches, False otherwise.'''
+
+    @staticmethod
+    def convert_row_to_record(row):
+        '''Converts a CSV row  to in_record'''
+
+    def convert_record(self, in_record):
+        '''Converts the record to the internal format.'''
+
+
+class GiroReader(FormatReader):
+    '''Format reader for the VISA card format'''
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def is_valid_header(header):
+        expected_header = [
+            "Buchungstag", "Wertstellung (Valuta)", "Vorgang", "Buchungstext", "Umsatz in EUR", ""]
+
+        return header == expected_header
+
+    @staticmethod
+    def convert_row_to_record(row):
+        '''Converts a single CSV row to a record
+        '''
+        record = {}
+        record["buchungstag"] = row[0]
+        record["valuta"] = row[1]
+        record["vorgang"] = row[2]
+        record["buchungstext"] = row[3]
+        record["umsatz"] = row[4]
+        return record
+
+    def convert_record(self, in_record):
+        '''Convert a single record from in_record to internal format
+
+        Parameters:
+
+        in_record: dict corresponding to the CSV produced by comdirect, like the following:
+
+            {
+                "buchungstag": "05.08.2019",
+                "valuta": "05.08.2019",
+                "vorgang": "Übertrag/Überweisung",
+                "buchungstext": "Auftraggeber:auftragnameBuchungstext: Der Buchungstext 123 456
+                Empfänger:empfängernameEmpfänger: nameKto/IBAN: DE123 BLZ/BIC: ABC123",
+                "umsatz": "-139.40"
+            }
+
+        out_record: sanitized CSV output:
+
+            {
+                "date": python datetime.date object,
+                "valuta": python datetime.date object,
+                "initiator": "auftragname",
+                "payee":
+                    {
+                        "name": "empfängername",
+                        "account_id": "DE123",
+                        "bic": "ABC123"
+                    },
+                "info": "first three space seperated words of buchungstext",
+                "memo": "the full buchungstext",
+                "amount": 12.34,
+            }
+
+        If some field cannot be assigned it is set to None
+        '''
+
+        out_record = {}
+
+        # Simple part:
+        out_record["date"] = parse_csv_date(in_record["buchungstag"])
+        out_record["valuta"] = parse_csv_date(in_record["valuta"])
+        out_record["amount"] = convert_umsatz(in_record["umsatz"])
+        out_record["memo"] = in_record["buchungstext"]
+
+        # Split fields:
+        list_of_fields = [
+            "Auftraggeber", "Buchungstext", "Empfänger", "Kto/IBAN", "BLZ/BIC"]
+        split_info = split_buchungstext(list_of_fields, in_record["buchungstext"])
+
+        out_record["initiator"] = split_info.get("Auftraggeber")
+
+        if "Buchungstext" in split_info:
+            out_record["info"] = get_first_n_words(3, split_info["Buchungstext"])
+        if "Empfänger" in split_info:
+            out_record["payee"] = {}
+            out_record["payee"]["name"] = split_info["Empfänger"]
+            if "Kto/IBAN" in split_info:
+                out_record["payee"]["account_id"] = split_info["Kto/IBAN"]
+            if "BLZ/BIC" in split_info:
+                out_record["payee"]["bic"] = split_info["BLZ/BIC"]
+        else:
+            if out_record["amount"] < 0:
+                if out_record["initiator"]:
+                    # For "Lastschrift" there is no "Empfänger", but a "Auftraggeber" in the CSV
+                    out_record["payee"] = {}
+                    out_record["payee"]["name"] = out_record["initiator"]
+                    out_record["payee"]["account_id"] = None
+                    out_record["payee"]["bic"] = None
+                else:
+                    # For "Kartenverfügung" there is no "Empfänger" set, but usually
+                    # the payee encoded in the buchungstext
+                    if in_record["vorgang"] == "Kartenverfügung":
+                        out_record["payee"] = {}
+                        out_record["payee"]["name"] = \
+                            get_first_n_words(4, split_info["Buchungstext"])
+                        out_record["payee"]["account_id"] = None
+                        out_record["payee"]["bic"] = None
+        return out_record
+
+
+class VisaReader(FormatReader):
+    '''Format reader for the VISA card format'''
+
+    def __init__(self):
+        pass
+
+    @staticmethod
+    def is_valid_header(header):
+        expected_header = [
+            "Buchungstag", "Wertstellung (Valuta)", "Vorgang", "Buchungstext", "Umsatz in EUR", ""]
+        return header == expected_header
+
+    def convert_record(self, in_record):
+        return {}
+
 
 def split_buchungstext(list_of_fields, buchungstext):
     '''Split buchungstext according to list_of_fields
@@ -147,95 +283,16 @@ def convert_umsatz(umsatz):
     return float(umsatz.replace(".", "").replace(",", "."))
 
 
-def convert_record_to_internal(in_record):
-    '''Convert a single record from in_record to internal format
-
-    Parameters:
-
-    in_record: dict corresponding to the CSV produced by comdirect, like the following:
-
-        {
-            "buchungstag": "05.08.2019",
-            "valuta": "05.08.2019",
-            "vorgang": "Übertrag/Überweisung",
-            "buchungstext": "Auftraggeber:auftragnameBuchungstext: Der Buchungstext 123 456
-            Empfänger:empfängernameEmpfänger: nameKto/IBAN: DE123 BLZ/BIC: ABC123",
-            "umsatz": "-139.40"
-        }
-
-    out_record: sanitized CSV output:
-
-        {
-            "date": python datetime.date object,
-            "valuta": python datetime.date object,
-            "initiator": "auftragname",
-            "payee":
-                {
-                    "name": "empfängername",
-                    "account_id": "DE123",
-                    "bic": "ABC123"
-                },
-            "info": "first three space seperated words of buchungstext",
-            "memo": "the full buchungstext",
-            "amount": 12.34,
-        }
-
-    If some field cannot be assigned it is set to None
-    '''
-
-    out_record = {}
-
-    # Simple part:
-    out_record["date"] = parse_csv_date(in_record["buchungstag"])
-    out_record["valuta"] = parse_csv_date(in_record["valuta"])
-    out_record["amount"] = convert_umsatz(in_record["umsatz"])
-    out_record["memo"] = in_record["buchungstext"]
-
-    # Split fields:
-    list_of_fields = [
-        "Auftraggeber", "Buchungstext", "Empfänger", "Kto/IBAN", "BLZ/BIC"]
-    split_info = split_buchungstext(list_of_fields, in_record["buchungstext"])
-
-    out_record["initiator"] = split_info.get("Auftraggeber")
-
-    if "Buchungstext" in split_info:
-        out_record["info"] = get_first_n_words(3, split_info["Buchungstext"])
-    if "Empfänger" in split_info:
-        out_record["payee"] = {}
-        out_record["payee"]["name"] = split_info["Empfänger"]
-        if "Kto/IBAN" in split_info:
-            out_record["payee"]["account_id"] = split_info["Kto/IBAN"]
-        if "BLZ/BIC" in split_info:
-            out_record["payee"]["bic"] = split_info["BLZ/BIC"]
-    else:
-        if out_record["amount"] < 0:
-            if out_record["initiator"]:
-                # For "Lastschrift" there is no "Empfänger", but a "Auftraggeber" in the CSV
-                out_record["payee"] = {}
-                out_record["payee"]["name"] = out_record["initiator"]
-                out_record["payee"]["account_id"] = None
-                out_record["payee"]["bic"] = None
-            else:
-                # For "Kartenverfügung" there is no "Empfänger" set, but usually the payee encoded
-                # in the buchungstext
-                if in_record["vorgang"] == "Kartenverfügung":
-                    out_record["payee"] = {}
-                    out_record["payee"]["name"] = get_first_n_words(4, split_info["Buchungstext"])
-                    out_record["payee"]["account_id"] = None
-                    out_record["payee"]["bic"] = None
-    return out_record
-
-
 def convert_internal_to_homebank(in_record):
     '''Convert from internal format to homebank format
 
     Parameters:
 
-    in_record: The internal record format, see convert_record_to_internal
+    in_record: The internal record format, see convert_record
 
     Result:
 
-    The python dict represantation of homebanks CSV format
+    The python dict representation of homebanks CSV format
 
     See http://homebank.free.fr/help/misc-csvformat.html
     '''
@@ -256,18 +313,6 @@ def convert_internal_to_homebank(in_record):
     return homebank
 
 
-def convert_row_to_record(row):
-    '''Converts a single CSV row to a record
-    '''
-    record = {}
-    record["buchungstag"] = row[0]
-    record["valuta"] = row[1]
-    record["vorgang"] = row[2]
-    record["buchungstext"] = row[3]
-    record["umsatz"] = row[4]
-    return record
-
-
 def fix_file(filepath, output_format, outfile):
     '''Fix the whole CSV file, writes to outfile.
 
@@ -278,8 +323,7 @@ def fix_file(filepath, output_format, outfile):
     outfile: A file handle for the output file
     '''
 
-    expected_header = [
-        "Buchungstag", "Wertstellung (Valuta)", "Vorgang", "Buchungstext", "Umsatz in EUR", ""]
+    format_reader = None
 
     with open(filepath, "r", encoding="iso-8859.1") as filehandle:
         filereader = csv.reader(filehandle, delimiter=";")
@@ -291,14 +335,17 @@ def fix_file(filepath, output_format, outfile):
 
         for row in filereader:
             row_nr = row_nr + 1
-            if not in_data and row == expected_header:
-                logging.info("Found header in line %d", row_nr)
-                in_data = True
-            elif in_data:
+            if not in_data and not format_reader:
+                if GiroReader.is_valid_header(row):
+                    logging.info("Found giro format header in line %d", row_nr)
+                    format_reader = GiroReader()
+                    in_data = True
+
+            elif in_data and format_reader:
                 if row:
                     logging.info("Processing line %d", row_nr)
-                    in_record = convert_row_to_record(row)
-                    internal_record = convert_record_to_internal(in_record)
+                    in_record = format_reader.convert_row_to_record(row)
+                    internal_record = format_reader.convert_record(in_record)
                     homebank_record = convert_internal_to_homebank(internal_record)
                     if homebank_record:
                         filewriter.writerow(homebank_record)
@@ -307,6 +354,7 @@ def fix_file(filepath, output_format, outfile):
                 else:
                     logging.info("Empty line in %d. Exiting data section.", row_nr)
                     in_data = False
+                    format_reader = None
 
 
 def main():

@@ -4,6 +4,7 @@ FILES_TO_LINK=" \
     copy_duplicity_backups.py \
     encryptfolder.sh \
     export_encrypted_borgbackup.sh \
+    fix_comdirect_csv.py \
     fix_fiducia_csv.py \
     get_clip_list.py \
     gnucash_accounts.py \
