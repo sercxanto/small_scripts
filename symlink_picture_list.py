@@ -73,7 +73,7 @@ def check_and_create_symlink(source, symlink_file):
        '''
     if os.path.lexists(symlink_file):
         if os.path.islink(symlink_file) and os.readlink(symlink_file) == source:
-            logging.debug("Symlink " + symlink_file + " to " + source + "already exists. Skip")
+            logging.debug("Symlink %s to %s already exists. Skip", symlink_file, source)
         else:
             logging.error("%s exists, but does not point to %s", symlink_file, source)
             sys.exit(1)
@@ -117,20 +117,20 @@ def generate_folder_structure(indir, outdir):
             full_path = os.path.join(root, file_)
             if file_ == "filelist.txt":
                 # Read content of filelist.txt and create symlinks for all the files
-                logging.debug("found filelist at " + full_path)
+                logging.debug("found filelist at %s", full_path)
                 filelist = read_list(full_path)
                 symlink_files(filelist, get_dest_path(root, "", indir, outdir))
             else:
                 # Symlink single file
-                logging.debug("found other file " + full_path)
+                logging.debug("found other file %s", full_path)
                 dest_path = get_dest_path(root, file_, indir, outdir)
                 check_and_create_symlink(os.path.abspath(full_path), dest_path)
         for dir_ in dirs:
             full_path = os.path.join(root, dir_)
-            logging.debug("found dir " + full_path)
+            logging.debug("found dir %s", full_path)
             dest_path = get_dest_path(root, dir_, indir, outdir)
             if not os.path.exists(dest_path):
-                logging.info(" Create dir " + dest_path)
+                logging.info(" Create dir %s", dest_path)
                 os.mkdir(dest_path)
             else:
                 logging.debug(" Dir %s already exists. Skip", dest_path)
