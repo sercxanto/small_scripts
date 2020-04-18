@@ -15,6 +15,7 @@ FILES_TO_LINK=" \
     mutt_flagged_vfolder_jump.py \
     mutt_flagged_vfolder_link.py \
     offlineimap_refresh.sh \
+    paypal2homebank.py \
     start_firefox_cleanprofile.py \
     start-ssh-agent.sh \
     symlink_picture_list.py \

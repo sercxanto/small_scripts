@@ -1,0 +1,7 @@
+date;payment;info;payee;memo;amount;category;tags
+2019-10-15;0;Website-Zahlung;Empfaengername1.;"Ihre Bestellung (Bestell-Nr.: 12345); Kontakt: empfaenger@example.com";-41,00;;
+2019-11-17;0;eBay-Auktionszahlung;Empfaengername2;Artikelname;61,95;;
+2019-11-19;0;PayPal Express-Zahlung;Empfaenger;ABCDEF Text 123.;-55,40;;
+2019-12-19;0;Allgemeine Gutschrift auf Kreditkarte;;Produktname;44,12;;
+2020-02-09;0;Allgemeine Zahlung;Empfaenger;Text;-36,00;;
+2020-02-24;0;Handyzahlung;Name;;17,00;;
