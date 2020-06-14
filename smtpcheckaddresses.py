@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
-'''smtpcheckaddresses.py accpepts a list of email addresses in a text file, one
+'''smtpcheckaddresses.py accepts a list of email addresses in a text file, one
 line per address. For each address it then opens a connection to a given host
-and checks the return code for the "resultPT TO" command. If the return code is in
+and checks the return code for the "RCPT TO" command. If the return code is in
 the range 200 to 299 the email address is assumed to be "OK".'''
 #
 #    smtpcheckaddresses.py

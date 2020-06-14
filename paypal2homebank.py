@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # vim: set fileencoding=utf-8 :
-""" paypal2homebank.py.py
+""" paypal2homebank.py
 
     Convert the CSV export of paypal to homebank CSV format
 """

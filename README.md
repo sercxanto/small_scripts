@@ -1,6 +1,29 @@
 # small_scripts
 
-Simple scripts to small for own repo
+Simple scripts to small for own repo:
+
+* `check_video_length.sh`: Checks video files in a folder to have a minimal length
+* `copy_duplicity_backups.py`: Copies most recent duplicity backup files
+* `encryptfolder.sh`: Encrypts and signs a folder to a tar.gpg file
+* `export_encrypted_borgbackup.sh`: Exports an encrypted borg backup to a tar.gpg file
+* `fiducia2homebank.py`: Convert the CSV export of fiducia driven banking websites,
+    i.e. Volksbank to homebank csv format
+* `fix_comdirect_csv.py`: Fix the CSV export of comdirect bank
+* `fix_fiducia_csv.py`: Fix the CSV export of fiducia driven banking websites
+* `get_clip_list.py`: Generates a CSV list of video files
+* `gnucash_accounts.py`: Get list of accounts from gnucash
+* `gnucash_import.py`: Yet another import script for gnucash
+* `maildir_trash.sh`: Purge mails older than 30 days from Maildir trash folder
+* `msmtpq_notify.py`: Notifies desktop user if msmtpq has actually sent or enqueued mail
+* `mutt_flagged_vfolder_jump.py`: Generates mutt command file to jump to the source of a symlinked mail
+* `mutt_flagged_vfolder_link.py`: Searches flagged mails and symlinks them to a (vfolder) maildir
+* `paypal2homebank.py`: Convert the CSV export of paypal to homebank CSV format
+* `smtpcheckaddresses.py`: Checks list of mail addresses at mail server
+* `start_firefox_cleanprofile.py`: Starts firefox with an empty (clean) profile
+* `start_ssh_agent.sh`: Starts SSH agent and sets environment variable
+* `symlink_picture_list.sh`: Creates symlinks to pictures out of a list in a file
+* `syncthing_findconflicts.py`: Scans all folders of the local Syncthing instance for conflict files
+* `syncthing_rescan.py`: Manually triggers a rescan of the local Syncthing instance
 
 ## copy duplicity backups
 
