@@ -77,4 +77,6 @@ if [ -x "$outfile" ]; then
     echo "$outfile already exists. Exit."
 fi
 
+echo "Writing to $outfile"
+
 tar -cf - "$opt_infolder" | gpg --encrypt --sign --default-recipient-self -o "$outfile"

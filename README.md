@@ -43,6 +43,27 @@ Do not output anything - only in case of errors:
 
     ./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
 
+## encryptfolder.sh
+
+This simple shell script archives a folder to a tar.gpg file.
+
+Example:
+
+    $ encryptfolder.sh small_scripts /tmp
+    Writing to /tmp/small_scripts.tar.gpg
+
+Depending on your local setup a popup appears to enter the password for your private key.
+
+The resulting file is encrypted and signed with the default GPG identity:
+
+    $ gpg -d /tmp/small_scripts.tar.gpg | tar -t
+    small_scripts/
+    small_scripts/install.sh
+    small_scripts/.gitignore
+    small_scripts/mutt_flagged_vfolder_jump.py
+    small_scripts/copy_duplicity_backups.py
+    [...]
+
 ## gnucash_import
 
 Yet another gnucash import script.
