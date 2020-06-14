@@ -105,7 +105,7 @@ class FormatReader(object):
 
 
 class GiroReader(FormatReader):
-    '''Format reader for the VISA card format'''
+    '''Format reader for the Giro format'''
     def __init__(self):
         pass
 
