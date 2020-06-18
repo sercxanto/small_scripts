@@ -103,6 +103,11 @@ if [ $# -ne 2 ]; then
     exit 1
 fi
 
+if ! command -v mplayer >/dev/null; then
+    echo "Error: Please install mplayer first."
+    exit 1
+fi
+
 opt_folder="$1"
 opt_minimal_length=$2
 if [ ! -d "$opt_folder" ]; then
