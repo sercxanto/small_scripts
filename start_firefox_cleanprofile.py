@@ -5,7 +5,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2016 Georg Lutz
+# Copyright (c) 2016-2020 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -25,8 +25,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-from __future__ import print_function
-
 # Standard library imports:
 import argparse
 import os
@@ -35,9 +33,6 @@ import shutil
 import subprocess
 import sys
 import configparser
-
-from future import standard_library
-standard_library.install_aliases()
 
 
 def get_args():
