@@ -25,6 +25,20 @@ Simple scripts to small for own repo:
 * `syncthing_findconflicts.py`: Scans all folders of the local Syncthing instance for conflict files
 * `syncthing_rescan.py`: Manually triggers a rescan of the local Syncthing instance
 
+## check_video_length
+
+Imagine to batch processs video DVDs with [handbrake](https://handbrake.fr/) to make a backup copy or transcode it to some other format. In some cases the DVD might have errors and produce a truncated version of video files only.
+
+You want to make sure that at least the produced output are valid videofiles and that the have a minimal number of seconds in it.
+
+`check_video_length.sh` reads out the metadata of video files with the help of mplayer and makes sure that they have a minimum number of playtime in seconds at least.
+
+Example:
+
+    $ check_video_length.sh /some/folder 60
+    NOK /some/folder/20190413_194624.MP4 20
+    OK /some/folder/20190413_194624.MP4 70
+
 ## copy duplicity backups
 
 This script copies/duplicates local [duplicity](http://duplicity.nongnu.org/)
@@ -86,6 +100,46 @@ The resulting file is encrypted and signed with the default GPG identity:
     small_scripts/mutt_flagged_vfolder_jump.py
     small_scripts/copy_duplicity_backups.py
     [...]
+
+## export_encrypted_borgbackup
+
+[Borgbackup](https://www.borgbackup.org/) is a deduplicating backup program with encryption and compresssion. It uses a sophisticated [storage format](https://borgbackup.readthedocs.io/en/stable/internals/data-structures.html) to fullfill those features.
+
+Each backup run is stored in a so called [archive](https://borgbackup.readthedocs.io/en/stable/quickstart.html#archives-and-repositories). Sometimes you may want to keep a specific archive in long term storage - indepenend of any specific software specific format - let say as regular tar file.
+
+`export_encrypted_borgbackup.sh` is a simple wrapper around borgbackup's export-tar command encrypts and sign with gnupgs main identify keys.
+
+Usage example (assuming that the env variable BORG_REPO is set):
+
+    $ export_encrypted_borgbackup.sh ::hostname-2020-06-05_22:19:17 /tmp/out.tar.gpg
+    [...]
+    $ file /tmp/out.tar.gpg
+    /tmp/out.tar.gpg: PGP RSA encrypted session key - keyid: xxxx RSA (Encrypt or Sign) 4096b .
+
+## fiducia2homebank
+
+`fiducia2homebank.py` converts the CSV export of fiducia based banking websites (e.g. Volksbank ) to the [CSV import format](http://homebank.free.fr/help/misc-csvformat.html) of [homebank](http://homebank.free.fr).
+
+Example:
+
+    $ fiducia2homebank.py Umsaetze_DExxxxxxxxxxxxxx_2020.01.01.csv ~/out.csv
+    Found header in line 9
+    Data section ends in line 42
+
+## get_clip_list
+
+`get_clip_list.py` scans a folder of video clips, reads out the meta data like filename, size in MB, duration in seconds and the timestamp and stores it in a csv file.
+
+You can use it, e.g. for input in a spread sheet for statistics or to prepare for rearranging clips in video editing software.
+
+Example:
+
+    $ get_clip_list_py somefolder out.csv
+    $ cat out.csv
+    filename;size_mb;duration_s;timestamp
+    2019_0412_155905_086.MP4;88.858065;24.920000;2019-04-12 15:59:29
+    2019_0412_160114_087.MP4;73.516233;20.620000;2019-04-12 16:01:34
+    2019_0412_161258_088.MP4;131.910425;37.020000;2019-04-12 16:13:34
 
 ## gnucash_import
 
@@ -174,6 +228,21 @@ Add it to your muttrc the following way:
 
 For the full story, read [mutt_flagged_vfolder_README.md](mutt_flagged_vfolder_README.md).
 
+## offlineimap_refresh
+
+[offlineimap](http://www.offlineimap.org/) is a python based tool to synchronize a remote IMAP mailbox to a local Maildir folder structure. Usually it is started in background and starts the synchronization in regular intervals (`autorefresh` setting). If the offlineimap receives a SIGUSR signal it manually triggers the synchronisation as soon as possible. This is exactly what `offlineimap_refresh.sh` is doing.
+
+## paypal2homebank
+
+`paypal2homebank.py` converts the CSV export of paypal to the [CSV import format](http://homebank.free.fr/help/misc-csvformat.html) of [homebank](http://homebank.free.fr).
+
+Example:
+
+    $ paypal2homebank.py ~/bin/Download.CSV ~/out.csv
+    Processing line 1
+    Processing line 2
+    Skipping type Memo in line 3
+
 ## smtpcheckaddresses
 
 Checks given email addresses on SMTP level.
@@ -191,6 +260,25 @@ the range 200 to 299 the email address is assumed to be "OK".
 Additionally when given the -s option it sends a short test email to the
 addresses so you can check that mails are really delivered locally and not
 relayed. It is wise to provide also some email addresses which must fail.
+
+## start_firefox_cleanprofile
+
+There are numerous plugins for Firefox, some of them are very useful as they provide anti-tracking, security and privacy related features.
+
+Nevertheless there are some websites having problems with these plugins. Private browsing mode is not an option in this case as by default most of the plugins are activated there too. If you just need to get things done quickly usually its the best to start with an empty profile in this case.
+
+`start_firefox_cleanprofile.py` does exactly this: It starts firefox with an empty profile. All you have to to is to create a profile with the name "clean" before the first use:
+
+    $ firefox -ProfileManager
+    [Create a new profile with name "clean"]
+    $ start_firefox_cleanprofile.py
+    profile folder: /home/user/.mozilla/firefox/xxxxxxxx.clean
+
+On every start the script wipes out the profile folder, deleting any traces of a previous session.
+
+## start-ssh-agent
+
+TODO: Describe
 
 ## symlink\_picture\_list
 
@@ -219,7 +307,6 @@ The filelist.txt files contain pathes where the actual pictures are stored, each
 
     /home/user/pics/2015/01/11/pic0001.jpg
     /home/user/pics/2015/03/11/pic0087.jpg
- 
 
 This would result in the following outdir:
 
@@ -236,3 +323,35 @@ outdir
 Any other file that is not named `filelist.txt` will be symlinked to outdir as well.
 
 outdir can be fed into any static gallery generator like [sigal](http://sigal.saimon.org) which parses folders recursively. The benefit is that you don't have to store a copy of all files on your harddisk and that you can define an order in which the pictures should appear in the gallery.
+
+## syncthing_findconflicts
+
+[Synthing](https://syncthing.net/) is an encrypted open source file synchronization tool. It synchronizes pairs of folders between two or more computers.
+
+In case of a [conflict](https://docs.syncthing.net/users/faq.html#what-if-there-is-a-conflict) (a file changed on both sides since the last synchronization) the conflicting file is saved as `<filename>.sync-conflict-<date>-<time>-<modifiedBy>.<ext>`
+
+Depending on the change frequency this may happen from time to time. `syncthing_findconflicts.py` is a script which reads out the local Syncthing configuration reports sync conflict files found in those folders.
+
+Example:
+
+    $ syncthing_findconflicts.py
+    Checking folder syncfolder1:
+    No conflicts found
+
+    Checking folder syncfolder2:
+    No conflicts found
+
+## syncthing_rescan
+
+[Synthing](https://syncthing.net/) is an encrypted open source file synchronization tool. It synchronizes pairs of folders between two or more computers.
+
+The synchronization runs usually time triggered. From time to time there might be a need to start the synchronization manually.
+
+`syncthing_rescan.py` reads out the local configuration and explicitely triggers a [rescan](https://docs.syncthing.net/rest/db-scan-post.html).
+
+Example:
+
+    $ syncthing_rescan.py
+    Calling http://127.0.0.1:8384/rest/db/scan:
+    200 OK
+    b''
