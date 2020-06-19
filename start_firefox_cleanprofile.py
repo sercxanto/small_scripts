@@ -72,7 +72,7 @@ def get_clean_profile_folder(profiles_folder, profilename):
         if section.startswith("Profile"):
             if config.get(section, "Name") == profilename:
                 profile_path = config.get(section, "Path")
-    if not profile_path:
+    if profile_path:
         return os.path.join(profiles_folder, profile_path)
 
     print("I could read out the profiles.ini file at " + profiles_ini + ".")
