@@ -328,7 +328,7 @@ outdir can be fed into any static gallery generator like [sigal](http://sigal.sa
 
 [Synthing](https://syncthing.net/) is an encrypted open source file synchronization tool. It synchronizes pairs of folders between two or more computers.
 
-In case of a [conflict](https://docs.syncthing.net/users/faq.html#what-if-there-is-a-conflict) (a file changed on both sides since the last synchronization) the conflicting file is saved as `<filename>.sync-conflict-<date>-<time>-<modifiedBy>.<ext>`
+In case of a [conflict](https://docs.syncthing.net/users/faq.html#what-if-there-is-a-conflict) (a file changed on both sides since the last synchronization) the conflicting file is saved as `<filename>.sync-conflict-<date>-<time>-<modifiedBy>.<ext>`.
 
 Depending on the change frequency this may happen from time to time. `syncthing_findconflicts.py` is a script which reads out the local Syncthing configuration reports sync conflict files found in those folders.
 
