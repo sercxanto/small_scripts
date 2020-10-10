@@ -18,6 +18,7 @@ Simple scripts to small for own repo:
 * `mutt_flagged_vfolder_jump.py`: Generates mutt command file to jump to the source of a symlinked mail
 * `mutt_flagged_vfolder_link.py`: Searches flagged mails and symlinks them to a (vfolder) maildir
 * `paypal2homebank.py`: Convert the CSV export of paypal to homebank CSV format
+* `sendmail_wrapper.py`: `/usr/sbin/sendmail` replacement for systems without an own local mail server
 * `smtpcheckaddresses.py`: Checks list of mail addresses at mail server
 * `start_firefox_cleanprofile.py`: Starts firefox with an empty (clean) profile
 * `start_ssh_agent.sh`: Starts SSH agent and sets environment variable
