@@ -1,0 +1,6 @@
+Subject: my subject
+From: <mailfrom@example.com>
+To: <mailto@example.com>
+User-Agent: sendmail_wrapper
+
+My body

@@ -1,0 +1,4 @@
+{
+    "from_address": "<mailfrom@example.com>",
+    "to_address": "<mailto@example.com>"
+}

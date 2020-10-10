@@ -1,0 +1,5 @@
+From: <root>
+To: root
+Subject: my subject
+
+My body

@@ -1,0 +1,5 @@
+From: <mailfrom@example.com>
+To: <mailto@example.com>
+Subject: my subject
+
+My body
