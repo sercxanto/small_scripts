@@ -2,6 +2,7 @@
 
 Simple scripts to small for own repo:
 
+* `barclaycard2homebank`: Convert barclaycard visa excel transaction report to homebank CSV format
 * `check_video_length.sh`: Checks video files in a folder to have a minimal length
 * `copy_duplicity_backups.py`: Copies most recent duplicity backup files
 * `encryptfolder.sh`: Encrypts and signs a folder to a tar.gpg file
@@ -25,6 +26,22 @@ Simple scripts to small for own repo:
 * `symlink_picture_list.sh`: Creates symlinks to pictures out of a list in a file
 * `syncthing_findconflicts.py`: Scans all folders of the local Syncthing instance for conflict files
 * `syncthing_rescan.py`: Manually triggers a rescan of the local Syncthing instance
+
+## barclaycard2homebank
+
+barclaycard2homebank is a tool which converts excel transaction exports from barclaycard to the CSV homebank format:
+
+    $ barclaycard2homebank Umsaetze.xlsx out.csv
+    barclaycard2homebank.go:100: infile Umsaetze.xlsx
+    barclaycard2homebank.go:101: outfile out.csv
+    barclaycard2homebank.go:153: Header found in line 12
+    barclaycard2homebank.go:144: Processing line 13
+    barclaycard2homebank.go:144: Processing line 14
+    barclaycard2homebank.go:144: Processing line 15
+    barclaycard2homebank.go:144: Processing line 16
+    barclaycard2homebank.go:144: Processing line 17
+    barclaycard2homebank.go:144: Processing line 18
+    barclaycard2homebank.go:165: Writing to file out.csv
 
 ## check_video_length
 

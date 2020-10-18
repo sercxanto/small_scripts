@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Installs scripts in ~/bin
 
@@ -22,3 +22,7 @@ for file in $FILES_TO_LINK; do
     fi
 done
 
+if command -v go > /dev/null; then
+    cd $SCRIPT_DIR/barclaycard2homebank
+    go build -o ~/bin
+fi
