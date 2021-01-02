@@ -261,6 +261,8 @@ Example:
     Processing line 2
     Skipping type Memo in line 3
 
+`Download.CSV` is the file you get when you go to ["Download activities"](https://business.paypal.com/merchantdata/reportHome?reportType=DLOG) in the WebUI and choose "CSV" as format.
+
 ## sendmail_wrapper
 
 `sendmail_wrapper.py` is a script which can be installed in server systems without an own local mail server.
