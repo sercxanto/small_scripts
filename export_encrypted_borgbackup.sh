@@ -63,7 +63,7 @@ opt_outfile="$2"
 
 set +e
 echo "Checking archive $opt_archive ..."
-borg info
+borg info $opt_archive
 rc=$?
 
 if [ $rc -ne 0 ]; then
