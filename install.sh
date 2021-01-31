@@ -23,6 +23,11 @@ for file in $FILES_TO_LINK; do
 done
 
 if command -v go > /dev/null; then
+    echo "Building go files"
     cd $SCRIPT_DIR/barclaycard2homebank
     go build -o ~/bin
+    cd $SCRIPT_DIR/moneywallet2homebank
+    go build -o ~/bin    
+else
+    echo "Go not found. Skipping go files."
 fi

@@ -15,6 +15,7 @@ Simple scripts to small for own repo:
 * `gnucash_accounts.py`: Get list of accounts from gnucash
 * `gnucash_import.py`: Yet another import script for gnucash
 * `maildir_trash.sh`: Purge mails older than 30 days from Maildir trash folder
+* `moneywallet2homebank`: Convert moneywallet CSV to homebank CSV format
 * `msmtpq_notify.py`: Notifies desktop user if msmtpq has actually sent or enqueued mail
 * `mutt_flagged_vfolder_jump.py`: Generates mutt command file to jump to the source of a symlinked mail
 * `mutt_flagged_vfolder_link.py`: Searches flagged mails and symlinks them to a (vfolder) maildir
@@ -190,6 +191,21 @@ Example:
     [...]
 
 The license is GPLv2 because of linking to Gnucashs python libraries.
+
+## moneywallt2homebank
+
+moneywallt2homebank is a tool which converts CSV export of moneywallt to the CSV homebank format:
+
+    $ moneywallet2homebank MoneyWallet_export_1.csv out.csv
+    moneywallet2homebank.go:120: infile MoneyWallet_export_1.csv
+    moneywallet2homebank.go:121: outfile out.csv
+    moneywallet2homebank.go:152: Processing line 1
+    moneywallet2homebank.go:152: Processing line 2
+    moneywallet2homebank.go:152: Processing line 3
+    moneywallet2homebank.go:152: Processing line 4
+    moneywallet2homebank.go:152: Processing line 5
+    moneywallet2homebank.go:152: Processing line 6
+    moneywallet2homebank.go:168: Writing to file out.csv
 
 ## msmtpq_notify.py
 
