@@ -5,6 +5,7 @@ FILES_TO_LINK=" \
     encryptfolder.sh \
     export_encrypted_borgbackup.sh \
     fiducia2homebank.py \
+    find_orphaned_sidecar_files.py \
     fix_comdirect_csv.py \
     fix_fiducia_csv.py \
     get_clip_list.py \

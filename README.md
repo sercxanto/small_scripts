@@ -145,6 +145,23 @@ Example:
     Found header in line 9
     Data section ends in line 42
 
+## find_orphaned_sidecar_files.py
+
+Some software like digital image processing tools work with [sidecar](https://en.wikipedia.org/wiki/Sidecar_file) files which are placed next to the original file. E.g. [darktable](https://www.darktable.org/) uses `.xmp` as file extension, [rawtherapee](https://www.rawtherapee.com/) `.pp3`.
+
+When you sort out / delete original files outside of the software, you end up with orphaned sidecar files.
+
+`find_orphaned_sidecar_files.py` helps in such a situation by finds such duplicates.
+
+
+Example usage:
+
+```
+$ find_orphaned_sidecar_files.py pics
+pics/dir1/orphaned1.xmp
+pics/dir2/orphaned2.xmp
+```
+
 ## get_clip_list
 
 `get_clip_list.py` scans a folder of video clips, reads out the meta data like filename, size in MB, duration in seconds and the timestamp and stores it in a csv file.
