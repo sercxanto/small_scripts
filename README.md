@@ -9,6 +9,7 @@ Simple scripts to small for own repo:
 * `export_encrypted_borgbackup.sh`: Exports an encrypted borg backup to a tar.gpg file
 * `fiducia2homebank.py`: Convert the CSV export of fiducia driven banking websites,
     i.e. Volksbank to homebank csv format
+* `find_orphaned_sidecar_files.py`: Find sidecar files (like XMP) which don't have the associated base file anymore
 * `fix_comdirect_csv.py`: Fix the CSV export of comdirect bank
 * `fix_fiducia_csv.py`: Fix the CSV export of fiducia driven banking websites
 * `get_clip_list.py`: Generates a CSV list of video files
