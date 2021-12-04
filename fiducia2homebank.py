@@ -3,11 +3,11 @@
 """ fiducia2homebank.py
 
     Convert the CSV export of fiducia driven banking websites,
-    i.e. Volksbank to homebank csv format"""
+    i.e. Volksbank to homebank CSV format"""
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2020 Georg Lutz
+# Copyright (c) 2020-2021 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -33,8 +33,6 @@ import collections
 import csv
 import datetime
 import logging
-import sys
-
 
 
 def get_args():
@@ -83,12 +81,13 @@ def fiducia2homebank(filepath, homebank_csvfile):
     fieldnames_fiducia = [
         "buchungstag",
         "valuta",
-        "auftraggeber",
-        "empfaenger",
-        "kontonr",
-        "iban",
-        "blz",
-        "bic",
+        "textschluessel",
+        "primanota",
+        "zahlungsempfaenger",
+        "zahlungsempfaenger_kto",
+        "zahlungsempfaenger_iban",
+        "zahlungsempfaenger_blz",
+        "zahlungsempfaenger_bic",
         "verwendungszweck",
         "kundenreferenz",
         "waehrung",
@@ -108,19 +107,20 @@ def fiducia2homebank(filepath, homebank_csvfile):
     ]
 
     expected_header = collections.OrderedDict([
-        ('buchungstag', 'Buchungstag'),
-        ('valuta', 'Valuta'),
-        ('auftraggeber', 'Auftraggeber/Zahlungsempfänger'),
-        ('empfaenger', 'Empfänger/Zahlungspflichtiger'),
-        ('kontonr', 'Konto-Nr.'),
-        ('iban', 'IBAN'),
-        ('blz', 'BLZ'),
-        ('bic', 'BIC'),
-        ('verwendungszweck', 'Vorgang/Verwendungszweck'),
-        ('kundenreferenz', 'Kundenreferenz'),
-        ('waehrung', 'Währung'),
-        ('umsatz', 'Umsatz'),
-        ('habensoll', ' ')])
+        ("buchungstag", "Buchungstag"),
+        ("valuta", "Valuta"),
+        ("textschluessel", "Textschlüssel"),
+        ("primanota", "Primanota"),
+        ("zahlungsempfaenger", "Zahlungsempfänger"),
+        ("zahlungsempfaenger_kto", "ZahlungsempfängerKto"),
+        ("zahlungsempfaenger_iban", "ZahlungsempfängerIBAN"),
+        ("zahlungsempfaenger_blz", "ZahlungsempfängerBLZ"),
+        ("zahlungsempfaenger_bic", "ZahlungsempfängerBIC"),
+        ("verwendungszweck", "Vorgang/Verwendungszweck"),
+        ("kundenreferenz", "Kundenreferenz"),
+        ("waehrung", "Währung"),
+        ("umsatz", "Umsatz"),
+        ("habensoll", "Soll/Haben")])
 
     with open(filepath, "r", encoding="iso-8859.1") as filehandle:
 
@@ -143,7 +143,7 @@ def fiducia2homebank(filepath, homebank_csvfile):
                 in_data_section = True
                 continue
             elif in_data_section and \
-                fiducia_record["valuta"] == "" and fiducia_record["auftraggeber"] == "":
+                fiducia_record["primanota"] == "" and fiducia_record["zahlungsempfaenger"] == "":
                 logging.info("Data section ends in line %d", row_nr)
                 in_data_section = False
                 break
@@ -156,7 +156,7 @@ def fiducia2homebank(filepath, homebank_csvfile):
             homebank_record["date"] = buchungstag.strftime("%Y-%m-%d")
             homebank_record["payment"] = 0
             homebank_record["memo"] = fix_multilinenote(fiducia_record["verwendungszweck"])
-            homebank_record["payee"] = fiducia_record["empfaenger"]
+            homebank_record["payee"] = fiducia_record["zahlungsempfaenger"]
             homebank_record["amount"] = fiducia_record["umsatz"]
             if fiducia_record["habensoll"] == "S":
                 homebank_record["amount"] = "-" + homebank_record["amount"]
