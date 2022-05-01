@@ -94,7 +94,7 @@ def fiducia2homebank(filepath, homebank_csvfile):
 
     fieldnames_fiducia = list(expected_header.keys())
 
-    with open(filepath, "r", encoding="iso-8859.1") as filehandle:
+    with open(filepath, "r", encoding="utf-8") as filehandle:
 
         filereader = csv.DictReader(
             filehandle, fieldnames=fieldnames_fiducia,
