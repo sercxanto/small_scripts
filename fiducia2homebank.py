@@ -51,24 +51,6 @@ class ParserErrorException(Exception):
         Exception.__init__(self, *args, **kwargs)
 
 
-def fix_multilinenote(in_note):
-    '''Fixes the newlines in the note field'''
-    out_note = ""
-    first_newline = True
-
-    for char in in_note:
-        if char == "\n":
-            if first_newline:
-                out_note = out_note + " "
-                first_newline = False
-            else:
-                pass
-        else:
-            out_note = out_note + char
-
-    return out_note
-
-
 def fiducia2homebank(filepath, homebank_csvfile):
     '''Fix the whole CSV file, writes to outfile.
 
@@ -77,23 +59,6 @@ def fiducia2homebank(filepath, homebank_csvfile):
     filepath: Path to the input file
     homebank_csvfile: File object to write to
     '''
-
-    fieldnames_fiducia = [
-        "buchungstag",
-        "valuta",
-        "textschluessel",
-        "primanota",
-        "zahlungsempfaenger",
-        "zahlungsempfaenger_kto",
-        "zahlungsempfaenger_iban",
-        "zahlungsempfaenger_blz",
-        "zahlungsempfaenger_bic",
-        "verwendungszweck",
-        "kundenreferenz",
-        "waehrung",
-        "umsatz",
-        "habensoll"
-    ]
 
     fieldnames_homebank = [
         "date",
@@ -107,20 +72,27 @@ def fiducia2homebank(filepath, homebank_csvfile):
     ]
 
     expected_header = collections.OrderedDict([
+        ("bezeichnung_auftragskonto", "Bezeichnung Auftragskonto"),
+        ("iban_auftragskonto", "IBAN Auftragskonto"),
+        ("bic_auftragskonto", "BIC Auftragskonto"),
+        ("bankname_auftragskonto", "Bankname Auftragskonto"),
         ("buchungstag", "Buchungstag"),
-        ("valuta", "Valuta"),
-        ("textschluessel", "Textschlüssel"),
-        ("primanota", "Primanota"),
-        ("zahlungsempfaenger", "Zahlungsempfänger"),
-        ("zahlungsempfaenger_kto", "ZahlungsempfängerKto"),
-        ("zahlungsempfaenger_iban", "ZahlungsempfängerIBAN"),
-        ("zahlungsempfaenger_blz", "ZahlungsempfängerBLZ"),
-        ("zahlungsempfaenger_bic", "ZahlungsempfängerBIC"),
-        ("verwendungszweck", "Vorgang/Verwendungszweck"),
-        ("kundenreferenz", "Kundenreferenz"),
-        ("waehrung", "Währung"),
-        ("umsatz", "Umsatz"),
-        ("habensoll", "Soll/Haben")])
+        ("valutadatum", "Valutadatum"),
+        ("name_zahlungsbeteiligter", "Name Zahlungsbeteiligter"),
+        ("iban_zahlungsbeteiligter", "IBAN Zahlungsbeteiligter"),
+        ("bic_zahlungsbeteiligter", "BIC (SWIFT-Code) Zahlungsbeteiligter"),
+        ("buchungstext", "Buchungstext"),
+        ("verwendungszweck", "Verwendungszweck"),
+        ("betrag", "Betrag"),
+        ("waehrung", "Waehrung"),
+        ("saldo_nach_buchung", "Saldo nach Buchung"),
+        ("bemerkung", "Bemerkung"),
+        ("kategorie", "Kategorie"),
+        ("steuerrelevant", "Steuerrelevant"),
+        ("glaebiger_id", "Glaeubiger ID"),
+        ("mandatsreferenz", "Mandatsreferenz")])
+
+    fieldnames_fiducia = list(expected_header.keys())
 
     with open(filepath, "r", encoding="iso-8859.1") as filehandle:
 
@@ -138,28 +110,23 @@ def fiducia2homebank(filepath, homebank_csvfile):
         for fiducia_record in filereader:
             row_nr = row_nr + 1
 
-            if not in_data_section and fiducia_record == expected_header:
-                logging.info("Found header in line %d", row_nr)
+            if not in_data_section:
+                if fiducia_record == expected_header:
+                    logging.info("Found header in line %d", row_nr)
+                else:
+                    logging.error("Header does not match")
+                    return
                 in_data_section = True
                 continue
-            elif in_data_section and \
-                fiducia_record["primanota"] == "" and fiducia_record["zahlungsempfaenger"] == "":
-                logging.info("Data section ends in line %d", row_nr)
-                in_data_section = False
-                break
 
-            if not in_data_section:
-                continue
-
+            logging.info("Processing line %d", row_nr)
             buchungstag = datetime.datetime.strptime(fiducia_record["buchungstag"], "%d.%m.%Y")
             homebank_record = {}
             homebank_record["date"] = buchungstag.strftime("%Y-%m-%d")
             homebank_record["payment"] = 0
-            homebank_record["memo"] = fix_multilinenote(fiducia_record["verwendungszweck"])
-            homebank_record["payee"] = fiducia_record["zahlungsempfaenger"]
-            homebank_record["amount"] = fiducia_record["umsatz"]
-            if fiducia_record["habensoll"] == "S":
-                homebank_record["amount"] = "-" + homebank_record["amount"]
+            homebank_record["memo"] = fiducia_record["verwendungszweck"]
+            homebank_record["payee"] = fiducia_record["name_zahlungsbeteiligter"]
+            homebank_record["amount"] = fiducia_record["betrag"]
 
             filewriter.writerow(homebank_record)
 
