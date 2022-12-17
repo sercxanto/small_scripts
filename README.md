@@ -2,6 +2,7 @@
 
 Simple scripts to small for own repo:
 
+* `backup_hosted_nextcloud_database.sh`: Backs up nextcloud calendar and addressbooks
 * `barclaycard2homebank`: Convert barclaycard visa excel transaction report to homebank CSV format
 * `check_video_length.sh`: Checks video files in a folder to have a minimal length
 * `copy_duplicity_backups.py`: Copies most recent duplicity backup files
@@ -28,6 +29,44 @@ Simple scripts to small for own repo:
 * `symlink_picture_list.sh`: Creates symlinks to pictures out of a list in a file
 * `syncthing_findconflicts.py`: Scans all folders of the local Syncthing instance for conflict files
 * `syncthing_rescan.py`: Manually triggers a rescan of the local Syncthing instance
+
+
+## backup_hosted_nextcloud_database.sh
+
+In a hosted environment you ususally don't have direct access to the database
+where calendars and contacts are stored.
+
+And even when the provider has some sort of backup
+
+* you don't really own it, because you can't download it
+    * e.g. you don't can't just migrate in case you are locked out for some reason
+* its an "all or nothing" story when it comes to restores
+    * the whole instance/account is reset to some point in time
+    * any change in between the last backup is effectively overwritten
+
+Enter backup_hosted_nextcloud_database.sh:
+
+Create a settings file `~/.backup_hosted_nextcloud_database.sh`
+(a commented example can be in the script help page with "-h"):
+
+```
+NEXTCLOUD_SERVER=nextcloud.example.com
+USERNAME=my_username
+PASSWORD=$(pass nextcloud.example.com)
+OUT_DIR=~/mirror/nextcloud.example.com
+CALENDARS="acalendar bcalendar"
+ADDRESSBOOKS="contacts"
+```
+
+Run the scripts and ICS and VCF files are written to `~/mirror/nextcloud.example.com`:
+
+```shell
+$ backup_hosted_nextcloud_database.sh
+Downloading calender 'acalendar' ...
+Downloading calender 'bcalendar' ...
+Downloading addressbook 'contacts' ...
+Download finished successfully
+```
 
 ## barclaycard2homebank
 

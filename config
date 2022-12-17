@@ -1,5 +1,6 @@
 # Config-File, sourced by install-script
 FILES_TO_LINK=" \
+    backup_hosted_nextcloud_database.sh \
     check_video_length.sh \
     copy_duplicity_backups.py \
     encryptfolder.sh \
