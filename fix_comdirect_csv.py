@@ -241,6 +241,8 @@ class GiroReader(FormatReader):
 
         if "Buchungstext" in split_info:
             out_record["info"] = self.get_first_n_words(3, split_info["Buchungstext"])
+        else:
+            out_record["info"] = ""
         if "Empfänger" in split_info:
             out_record["payee"] = {}
             out_record["payee"]["name"] = split_info["Empfänger"]
