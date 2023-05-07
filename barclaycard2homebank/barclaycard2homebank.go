@@ -32,8 +32,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/360EntSecGroup-Skylar/excelize/v2"
 	"github.com/alecthomas/kong"
+	"github.com/xuri/excelize/v2"
 )
 
 var CLI struct {
