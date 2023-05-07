@@ -33,24 +33,12 @@ import (
 	"time"
 
 	"github.com/360EntSecGroup-Skylar/excelize/v2"
+	"github.com/alecthomas/kong"
 )
 
-func usage() {
-	usage := `barclaycard2homebank
-
-Converts an barclaycard excel file to a homebank CSV file
-
-Usage:
-	barclaycard2homebank infile outfile
-	barclaycard2homebank -h
-
-Arguments:
-	infile: Excel file downloaded from barclaycard website
-	outfile: CSV file ready to import into homebank
-
-Options:
-	-h --help     Show this screen.`
-	fmt.Println(usage)
+var CLI struct {
+	Infile  string `arg:"" name:"infile" help:"Excel file downloaded from barclaycard website" type:"path"`
+	Outfile string `arg:"" name:"outfile" help:"CSV file ready to import into homebank" type:"path"`
 }
 
 // Single record of barclaycard data, all data is stored as string in the the excel file
@@ -180,20 +168,10 @@ func main() {
 
 	log.SetFlags(log.Lshortfile)
 
-	if len(os.Args) == 2 {
-		usage()
-		os.Exit(0)
-	}
+	kong.Parse(&CLI,
+		kong.Description("Converts an barclaycard excel file to a homebank CSV file"))
 
-	if len(os.Args) != 3 {
-		usage()
-		os.Exit(1)
-	}
-
-	infile := os.Args[1]
-	outfile := os.Args[2]
-
-	result := barclaycard2homebank(infile, outfile)
+	result := barclaycard2homebank(CLI.Infile, CLI.Outfile)
 	if result {
 		os.Exit(0)
 	}
