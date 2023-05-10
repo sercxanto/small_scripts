@@ -102,15 +102,15 @@ func barclaycard2homebank(infilePath string, outfilePath string) bool {
 
 	dataHeader := []string{
 		"Referenznummer",
-		"Transaktionsdatum",
+		"Buchungsdatum", // eigentlich: Transaktionsdatum
 		"Buchungsdatum",
-		"Betrag in EUR",
+		"Betrag",
 		"Beschreibung",
 		"Typ",
 		"Status",
 		"Kartennummer",
 		"Originalbetrag",
-		"Mögliche Ratenkäufe",
+		"Mögliche Zahlpläne",
 		"Land",
 		"Name des Karteninhabers",
 		"Kartennetzwerk",
