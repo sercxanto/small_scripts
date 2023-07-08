@@ -64,7 +64,7 @@ type HomebankRecord struct {
 // convertRecord converts a single record from barclaycard to homebank format
 func convertRecord(barclaycardRecord *BarclaycardRecord) (record HomebankRecord, err error) {
 	var result HomebankRecord
-	date, err := time.Parse("02.01.2006", barclaycardRecord.bookingDate)
+	date, err := time.Parse("02.01.2006", barclaycardRecord.transactionDate)
 	if err != nil {
 		return result, errors.New("Date parsing error")
 	}
@@ -133,6 +133,7 @@ func barclaycard2homebank(infilePath string, outfilePath string) bool {
 			homebankRecord, err := convertRecord(&barclaycardRecord)
 			if err != nil {
 				log.Println("Parsing error in line", lineNr)
+				log.Printf("Error: %s", err)
 				return false
 			}
 			homebankRecords = append(homebankRecords, homebankRecord)
