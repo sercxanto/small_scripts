@@ -64,8 +64,8 @@ def get_file_list(folder):
 def get_json_info_ffprobe(filename):
     '''Returns json info on filename for first video stream'''
     args = [
-        "ffprobe", "-show_streams", "-print_format", "json", "-v", "quiet",
-        "-select_streams", "video", filename
+        "ffprobe", "-show_streams", "-print_format", "json",
+        filename
         ]
     logging.info("Running ffprobe on %s", filename)
     proc = subprocess.Popen(args=args, stderr=subprocess.PIPE, stdout=subprocess.PIPE)

@@ -5,6 +5,7 @@ FILES_TO_LINK=" \
     copy_duplicity_backups.py \
     encryptfolder.sh \
     export_encrypted_borgbackup.sh \
+    export_encrypted_borgmaticbackup.sh \
     fiducia2homebank.py \
     find_orphaned_sidecar_files.py \
     fix_comdirect_csv.py \

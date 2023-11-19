@@ -8,6 +8,7 @@ Simple scripts to small for own repo:
 * `copy_duplicity_backups.py`: Copies most recent duplicity backup files
 * `encryptfolder.sh`: Encrypts and signs a folder to a tar.gpg file
 * `export_encrypted_borgbackup.sh`: Exports an encrypted borg backup to a tar.gpg file
+* `export_encrypted_borgmaticbackup.sh`: Exports an encrypted borgmatic backup to a tar.gpg file
 * `fiducia2homebank.py`: Convert the CSV export of fiducia driven banking websites,
     i.e. Volksbank to homebank csv format
 * `find_orphaned_sidecar_files.py`: Find sidecar files (like XMP) which don't have the associated base file anymore
@@ -193,6 +194,19 @@ $ export_encrypted_borgbackup.sh ::hostname-2020-06-05_22:19:17 /tmp/out.tar.gpg
 $ file /tmp/out.tar.gpg
 /tmp/out.tar.gpg: PGP RSA encrypted session key - keyid: xxxx RSA (Encrypt or Sign) 4096b .
 ```
+
+## export_encrypted_borgmaticbackup
+
+Like `export_encrypted_borgbackup`, but with borgmatic:
+
+```shell
+$ export_encrypted_borgmaticbackup.sh -r /path/to/repo my_borgmatic.yaml /tmp/out.tar.gpg
+[...]
+$ file /tmp/out.tar.gpg
+/tmp/out.tar.gpg: PGP RSA encrypted session key - keyid: xxxx RSA (Encrypt or Sign) 4096b .
+```
+
+It exports the last archive of the mentioned config / repo.
 
 ## fiducia2homebank
 
