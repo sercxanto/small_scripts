@@ -30,7 +30,6 @@ Simple scripts to small for own repo:
 * `syncthing_findconflicts.py`: Scans all folders of the local Syncthing instance for conflict files
 * `syncthing_rescan.py`: Manually triggers a rescan of the local Syncthing instance
 
-
 ## backup_hosted_nextcloud_database.sh
 
 In a hosted environment you ususally don't have direct access to the database
@@ -49,7 +48,7 @@ Enter backup_hosted_nextcloud_database.sh:
 Create a settings file `~/.backup_hosted_nextcloud_database.sh`
 (a commented example can be in the script help page with "-h"):
 
-```
+```shell
 NEXTCLOUD_SERVER=nextcloud.example.com
 USERNAME=my_username
 PASSWORD=$(pass nextcloud.example.com)
@@ -72,17 +71,19 @@ Download finished successfully
 
 barclaycard2homebank is a tool which converts excel transaction exports from barclaycard to the CSV homebank format:
 
-    $ barclaycard2homebank Umsaetze.xlsx out.csv
-    barclaycard2homebank.go:100: infile Umsaetze.xlsx
-    barclaycard2homebank.go:101: outfile out.csv
-    barclaycard2homebank.go:153: Header found in line 12
-    barclaycard2homebank.go:144: Processing line 13
-    barclaycard2homebank.go:144: Processing line 14
-    barclaycard2homebank.go:144: Processing line 15
-    barclaycard2homebank.go:144: Processing line 16
-    barclaycard2homebank.go:144: Processing line 17
-    barclaycard2homebank.go:144: Processing line 18
-    barclaycard2homebank.go:165: Writing to file out.csv
+```shell
+$ barclaycard2homebank Umsaetze.xlsx out.csv
+barclaycard2homebank.go:100: infile Umsaetze.xlsx
+barclaycard2homebank.go:101: outfile out.csv
+barclaycard2homebank.go:153: Header found in line 12
+barclaycard2homebank.go:144: Processing line 13
+barclaycard2homebank.go:144: Processing line 14
+barclaycard2homebank.go:144: Processing line 15
+barclaycard2homebank.go:144: Processing line 16
+barclaycard2homebank.go:144: Processing line 17
+barclaycard2homebank.go:144: Processing line 18
+barclaycard2homebank.go:165: Writing to file out.csv
+```
 
 ## check_video_length
 
@@ -94,9 +95,11 @@ You want to make sure that at least the produced output are valid videofiles and
 
 Example:
 
-    $ check_video_length.sh /some/folder 60
-    NOK /some/folder/20190413_194624.MP4 20
-    OK /some/folder/20190413_194624.MP4 70
+```shell
+$ check_video_length.sh /some/folder 60
+NOK /some/folder/20190413_194624.MP4 20
+OK /some/folder/20190413_194624.MP4 70
+```
 
 ## copy duplicity backups
 
@@ -120,24 +123,34 @@ In case of any error the scripts exits with a return code != 0.
 Copy with standard arguments (last two full backups and associated
 incrementals), older backups / other files at dst folder will be deleted:
 
-    ./copy_duplicity_backups.py /mnt/src /mnt/dst
+```shell
+./copy_duplicity_backups.py /mnt/src /mnt/dst
+```
 
 Show which files would would be deleted/copied without actually writing
 anything to disk:
 
-    ./copy_duplicity_backups.py --dryrun /mnt/src /mnt/dst
+```shell
+./copy_duplicity_backups.py --dryrun /mnt/src /mnt/dst
+```
 
 Copy last 5 backups and associated incrementals:
 
-    ./copy_duplicity_backups.py --nr 5 /mnt/src /mnt/dst
+```shell
+./copy_duplicity_backups.py --nr 5 /mnt/src /mnt/dst
+```
 
 Limit size of dst folder to 5GB. Backups are copied until limit is reached:
 
-    ./copy_duplicity_backups.py --maxsize 5000 /mnt/src /mnt/dst
+```shell
+./copy_duplicity_backups.py --maxsize 5000 /mnt/src /mnt/dst
+```
 
 Do not output anything - only in case of errors:
 
-    ./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
+```shell
+./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
+```
 
 ## encryptfolder.sh
 
@@ -145,20 +158,24 @@ This simple shell script archives a folder to a tar.gpg file.
 
 Example:
 
-    $ encryptfolder.sh small_scripts /tmp
-    Writing to /tmp/small_scripts.tar.gpg
+```shell
+$ encryptfolder.sh small_scripts /tmp
+Writing to /tmp/small_scripts.tar.gpg
+```
 
 Depending on your local setup a popup appears to enter the password for your private key.
 
 The resulting file is encrypted and signed with the default GPG identity:
 
-    $ gpg -d /tmp/small_scripts.tar.gpg | tar -t
-    small_scripts/
-    small_scripts/install.sh
-    small_scripts/.gitignore
-    small_scripts/mutt_flagged_vfolder_jump.py
-    small_scripts/copy_duplicity_backups.py
-    [...]
+```shell
+$ gpg -d /tmp/small_scripts.tar.gpg | tar -t
+small_scripts/
+small_scripts/install.sh
+small_scripts/.gitignore
+small_scripts/mutt_flagged_vfolder_jump.py
+small_scripts/copy_duplicity_backups.py
+[...]
+```
 
 ## export_encrypted_borgbackup
 
@@ -170,10 +187,12 @@ Each backup run is stored in a so called [archive](https://borgbackup.readthedoc
 
 Usage example (assuming that the env variable BORG_REPO is set):
 
-    $ export_encrypted_borgbackup.sh ::hostname-2020-06-05_22:19:17 /tmp/out.tar.gpg
-    [...]
-    $ file /tmp/out.tar.gpg
-    /tmp/out.tar.gpg: PGP RSA encrypted session key - keyid: xxxx RSA (Encrypt or Sign) 4096b .
+```shell
+$ export_encrypted_borgbackup.sh ::hostname-2020-06-05_22:19:17 /tmp/out.tar.gpg
+[...]
+$ file /tmp/out.tar.gpg
+/tmp/out.tar.gpg: PGP RSA encrypted session key - keyid: xxxx RSA (Encrypt or Sign) 4096b .
+```
 
 ## fiducia2homebank
 
@@ -181,9 +200,11 @@ Usage example (assuming that the env variable BORG_REPO is set):
 
 Example:
 
-    $ fiducia2homebank.py Umsaetze_DExxxxxxxxxxxxxx_2020.01.01.csv ~/out.csv
-    Found header in line 9
-    Data section ends in line 42
+```shell
+$ fiducia2homebank.py Umsaetze_DExxxxxxxxxxxxxx_2020.01.01.csv ~/out.csv
+Found header in line 9
+Data section ends in line 42
+```
 
 ## find_orphaned_sidecar_files.py
 
@@ -193,10 +214,9 @@ When you sort out / delete original files outside of the software, you end up wi
 
 `find_orphaned_sidecar_files.py` helps in such a situation by finds such duplicates.
 
-
 Example usage:
 
-```
+```shell
 $ find_orphaned_sidecar_files.py pics
 pics/dir1/orphaned1.xmp
 pics/dir2/orphaned2.xmp
@@ -210,12 +230,14 @@ You can use it, e.g. for input in a spread sheet for statistics or to prepare fo
 
 Example:
 
-    $ get_clip_list_py somefolder out.csv
-    $ cat out.csv
-    filename;size_mb;duration_s;timestamp
-    2019_0412_155905_086.MP4;88.858065;24.920000;2019-04-12 15:59:29
-    2019_0412_160114_087.MP4;73.516233;20.620000;2019-04-12 16:01:34
-    2019_0412_161258_088.MP4;131.910425;37.020000;2019-04-12 16:13:34
+```shell
+$ get_clip_list_py somefolder out.csv
+$ cat out.csv
+filename;size_mb;duration_s;timestamp
+2019_0412_155905_086.MP4;88.858065;24.920000;2019-04-12 15:59:29
+2019_0412_160114_087.MP4;73.516233;20.620000;2019-04-12 16:01:34
+2019_0412_161258_088.MP4;131.910425;37.020000;2019-04-12 16:13:34
+```
 
 ## gnucash_import
 
@@ -223,13 +245,17 @@ Yet another gnucash import script.
 
 Parses a CSV file and directly imports it into gnucash. Example usage:
 
-    gnucash_import.py csv_file myfile.gnucash "Aktiva:Barvermögen:Girokonto"
+```shell
+gnucash_import.py csv_file myfile.gnucash "Aktiva:Barvermögen:Girokonto"
+```
 
 The CSV file is expected to be in an defined format, containing already information on the account of the cross entry (double-accounting) and a description for the booking:
 
-    date;accountname;description;value
-    2017-01-01;abcd:efg;Some description;2.31
-    2017-01-02;xyz:abc;Some other description;1.23
+```csv
+date;accountname;description;value
+2017-01-01;abcd:efg;Some description;2.31
+2017-01-02;xyz:abc;Some other description;1.23
+```
 
 With the plain CSV import builtin into Gnucash the user has to confirm the account mapping based on the description.
 
@@ -241,11 +267,13 @@ Returns list of accounts defined in a gnucash file.
 
 Example:
 
-    $ ./gnucash_accounts.py gnucash.gnucash 
-    Aktiva:Barvermögen:Bargeld
-    Aktiva:Barvermögen:Girokonto
-    Aktiva:Barvermögen:Sparkonto
-    [...]
+```shell
+$ ./gnucash_accounts.py gnucash.gnucash 
+Aktiva:Barvermögen:Bargeld
+Aktiva:Barvermögen:Girokonto
+Aktiva:Barvermögen:Sparkonto
+[...]
+```
 
 The license is GPLv2 because of linking to Gnucashs python libraries.
 
@@ -253,16 +281,18 @@ The license is GPLv2 because of linking to Gnucashs python libraries.
 
 moneywallt2homebank is a tool which converts CSV export of moneywallt to the CSV homebank format:
 
-    $ moneywallet2homebank MoneyWallet_export_1.csv out.csv
-    moneywallet2homebank.go:120: infile MoneyWallet_export_1.csv
-    moneywallet2homebank.go:121: outfile out.csv
-    moneywallet2homebank.go:152: Processing line 1
-    moneywallet2homebank.go:152: Processing line 2
-    moneywallet2homebank.go:152: Processing line 3
-    moneywallet2homebank.go:152: Processing line 4
-    moneywallet2homebank.go:152: Processing line 5
-    moneywallet2homebank.go:152: Processing line 6
-    moneywallet2homebank.go:168: Writing to file out.csv
+```shell
+$ moneywallet2homebank MoneyWallet_export_1.csv out.csv
+moneywallet2homebank.go:120: infile MoneyWallet_export_1.csv
+moneywallet2homebank.go:121: outfile out.csv
+moneywallet2homebank.go:152: Processing line 1
+moneywallet2homebank.go:152: Processing line 2
+moneywallet2homebank.go:152: Processing line 3
+moneywallet2homebank.go:152: Processing line 4
+moneywallet2homebank.go:152: Processing line 5
+moneywallet2homebank.go:152: Processing line 6
+moneywallet2homebank.go:168: Writing to file out.csv
+```
 
 ## msmtpq_notify.py
 
@@ -307,7 +337,9 @@ When called in the folder MAILDIR, creates a symlinked file in VFOLDER for every
 
 Add it to your muttrc the following way:
 
-    folder-hook . 'macro index F "<flag-message><enter-command>unset wait_key^m<sync-mailbox><shell-escape>mutt_flagged_vfolder_link.py ~/Maildir ~/Maildir/.flagged^m<enter-command>set wait_key^m"'
+```text
+folder-hook . 'macro index F "<flag-message><enter-command>unset wait_key^m<sync-mailbox><shell-escape>mutt_flagged_vfolder_link.py ~/Maildir ~/Maildir/.flagged^m<enter-command>set wait_key^m"'
+```
 
 ### `mutt_flagged_vfolder_jump.py VFOLDER CMDFILE`, the message is on stdin
 
@@ -315,7 +347,9 @@ When called in a virtual folder with symlinked mails, jumps to the original mess
 
 Add it to your muttrc the following way:
 
-    folder-hook ".*flagged*" 'macro index F "<enter-command>unset wait_key^m<pipe-entry>mutt_flagged_vfolder_jump.py ~/Maildir/.flagged ~/tmp/mutt_flagged_vfolder_jump<enter><enter-command>source ~/tmp/mutt_flagged_vfolder_jump^m<enter-command>set wait_key^m"'
+```text
+folder-hook ".*flagged*" 'macro index F "<enter-command>unset wait_key^m<pipe-entry>mutt_flagged_vfolder_jump.py ~/Maildir/.flagged ~/tmp/mutt_flagged_vfolder_jump<enter><enter-command>source ~/tmp/mutt_flagged_vfolder_jump^m<enter-command>set wait_key^m"'
+```
 
 For the full story, read [mutt_flagged_vfolder_README.md](mutt_flagged_vfolder_README.md).
 
@@ -329,10 +363,12 @@ For the full story, read [mutt_flagged_vfolder_README.md](mutt_flagged_vfolder_R
 
 Example:
 
-    $ paypal2homebank.py ~/bin/Download.CSV ~/out.csv
-    Processing line 1
-    Processing line 2
-    Skipping type Memo in line 3
+```shell
+$ paypal2homebank.py ~/bin/Download.CSV ~/out.csv
+Processing line 1
+Processing line 2
+Skipping type Memo in line 3
+```
 
 `Download.CSV` is the file you get when you go to ["Download activities"](https://business.paypal.com/merchantdata/reportHome?reportType=DLOG) in the WebUI and choose "CSV" as format.
 
@@ -352,7 +388,7 @@ The default config file is `/etc/sendmail_wrapper.ini`. The location can be over
 
 The INI style config file is expected to have entries like in the following example:
 
-```
+```ini
 from_address = <mailfrom@example.com>
 to_address = <mailto@example.com>
 servername = mail.example.com
@@ -412,10 +448,12 @@ Nevertheless there are some websites having problems with these plugins. Private
 
 `start_firefox_cleanprofile.py` does exactly this: It starts firefox with an empty profile. All you have to to is to create a profile with the name "clean" before the first use:
 
+```shell
     $ firefox -ProfileManager
     [Create a new profile with name "clean"]
     $ start_firefox_cleanprofile.py
     profile folder: /home/user/.mozilla/firefox/xxxxxxxx.clean
+```
 
 On every start the script wipes out the profile folder, deleting any traces of a previous session.
 
@@ -431,7 +469,7 @@ The script expects two arguments: indir and outdir.
 
 indir is a folder structure like the following:
 
-```
+```text
 indir/
 ├── 2015
 │   └── 2015_mybest_pics
@@ -448,12 +486,14 @@ indir/
 
 The filelist.txt files contain pathes where the actual pictures are stored, each name in a new line, e.g. for `2015_mybest_pics`:
 
-    /home/user/pics/2015/01/11/pic0001.jpg
-    /home/user/pics/2015/03/11/pic0087.jpg
+```text
+/home/user/pics/2015/01/11/pic0001.jpg
+/home/user/pics/2015/03/11/pic0087.jpg
+```
 
 This would result in the following outdir:
 
-```
+```text
 outdir
 ├── 2015
 │   └── 2015_mybest_pics
@@ -477,12 +517,14 @@ Depending on the change frequency this may happen from time to time. `syncthing_
 
 Example:
 
-    $ syncthing_findconflicts.py
-    Checking folder syncfolder1:
-    No conflicts found
+```shell
+$ syncthing_findconflicts.py
+Checking folder syncfolder1:
+No conflicts found
 
-    Checking folder syncfolder2:
-    No conflicts found
+Checking folder syncfolder2:
+No conflicts found
+```
 
 ## syncthing_rescan
 
@@ -494,7 +536,9 @@ The synchronization runs usually time triggered. From time to time there might b
 
 Example:
 
-    $ syncthing_rescan.py
-    Calling http://127.0.0.1:8384/rest/db/scan:
-    200 OK
-    b''
+```shell
+$ syncthing_rescan.py
+Calling http://127.0.0.1:8384/rest/db/scan:
+200 OK
+b''
+```
