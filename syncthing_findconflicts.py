@@ -5,7 +5,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2017-2018 Georg Lutz
+# Copyright (c) 2017-2024 Georg Lutz
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -53,7 +53,21 @@ def get_config():
         }
     ]
     '''
-    filepath = os.path.expanduser("~/.config/syncthing/config.xml")
+
+    filepath_candidates = [
+        os.path.expanduser("~/.local/state/syncthing/config.xml"),
+        os.path.expanduser("~/.config/syncthing/config.xml")
+    ]
+    filepath = ""
+
+    for file_ in filepath_candidates:
+        if os.path.exists(file_):
+            filepath = file_
+            break
+
+    if not filepath:
+        print("Could not find syncthing config file")
+        sys.exit(1)
 
     result = []
 
