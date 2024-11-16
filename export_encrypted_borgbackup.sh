@@ -38,8 +38,13 @@ function help()
     echo "$script_name archive outfile"
     echo ""
     echo "  archive: The borg archive to export."
-    echo "  outfile: Where to place the resulting tar.gpg file."
+    echo "  outfile: Full path of the resulting tar.gpg file."
     echo ""
+    echo "The necessary information is expected to be available in environment variables"
+    echo "like BORG_REPO and BORG_PASSPHRASE / BORG_PASSCOMMAND."
+    echo "Hint: They won't show up in Bash history when you prefix the export command with a space."
+    echo "The archives can be listed e.g. by 'borg list' and referenced like ::<archive-name>."
+
 }
 
 function error()
