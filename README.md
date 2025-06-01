@@ -6,6 +6,7 @@ Simple scripts to small for own repo:
 * `barclaycard2homebank`: Convert barclaycard visa excel transaction report to homebank CSV format
 * `check_video_length.sh`: Checks video files in a folder to have a minimal length
 * `copy_duplicity_backups.py`: Copies most recent duplicity backup files
+* `docker_socket_execute.py`: Run "docker exec" commands on a local docker socket without docker client
 * `encryptfolder.sh`: Encrypts and signs a folder to a tar.gpg file
 * `export_encrypted_borgbackup.sh`: Exports an encrypted borg backup to a tar.gpg file
 * `export_encrypted_borgmaticbackup.sh`: Exports an encrypted borgmatic backup to a tar.gpg file
@@ -151,6 +152,24 @@ Do not output anything - only in case of errors:
 
 ```shell
 ./copy_duplicity_backups.py --quiet /mnt/src /mnt/dst
+```
+
+## docker_socket_execute.py
+
+This script emulates a `docker exec ...` call in constraint environments where only 
+the socket `/var/run/docker.sock` and a python interpreter is available, e.g.
+in a docker container itself without a docker client.
+
+To run `command` in `container` this call
+
+```shell
+docker_socket_execute.py container command
+```
+
+is equivalent to this one:
+
+```shell
+docker exec container command
 ```
 
 ## encryptfolder.sh
