@@ -108,9 +108,9 @@ def main():
 
     if docker_exec(args.container, args.command):
         logging.info("Command executed successfully in container %s", args.container)
-        sys.exit(1)
     else:
         logging.error("Failed to execute command in container %s", args.container)
+        sys.exit(1)
 
 if __name__ == "__main__":
     main()
