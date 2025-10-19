@@ -2,27 +2,15 @@
 FILES_TO_LINK=" \
     backup_hosted_nextcloud_database.sh \
     check_video_length.sh \
-    copy_duplicity_backups.py \
     encryptfolder.sh \
     export_encrypted_borgbackup.sh \
     export_encrypted_borgmaticbackup.sh \
-    fiducia2homebank.py \
     find_orphaned_sidecar_files.py \
-    fix_comdirect_csv.py \
-    fix_fiducia_csv.py \
     get_clip_list.py \
-    gnucash_accounts.py \
-    gnucash_import.py \
     maildir_trash.sh \
-    msmtpq_notify.py \
-    mutt_flagged_vfolder_jump.py \
-    mutt_flagged_vfolder_link.py \
     offlineimap_refresh.sh \
-    paypal2homebank.py \
     start_firefox_cleanprofile.py \
     start-ssh-agent.sh \
     symlink_picture_list.py \
-    sendmail_wrapper.py \
     syncthing_findconflicts.py \
     syncthing_rescan.py "
-
