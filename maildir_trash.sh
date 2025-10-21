@@ -25,11 +25,16 @@
 # SOFTWARE.
 # 
 
-set -eu
+set -e
 
 # call for each subdir direcly, to not delete other files (e.g. metadata
 # stored there by dovecot or courier)
-trash_root=~/Maildir/.Trash
+if [ -n "$MAIL" ]; then
+    maildir_root=$MAIL
+else
+    maildir_root=~/Maildir
+fi
+
+trash_root=$maildir_root/.Trash
 
 find $trash_root/cur $trash_root/new $trash_root/tmp -type f -ctime +30 -print0 | xargs -0 -r rm -f
-
