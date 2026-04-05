@@ -29,6 +29,7 @@
 import argparse
 import os
 import xml.parsers.expat
+import sys
 
 
 def get_args():
@@ -56,7 +57,8 @@ def get_config():
 
     filepath_candidates = [
         os.path.expanduser("~/.local/state/syncthing/config.xml"),
-        os.path.expanduser("~/.config/syncthing/config.xml")
+        os.path.expanduser("~/.config/syncthing/config.xml"),
+        os.path.expanduser("~/Library/Application Support/Syncthing/config.xml")
     ]
     filepath = ""
 
